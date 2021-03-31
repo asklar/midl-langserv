@@ -1,0 +1,59 @@
+{
+  "scopeName": "source.midl3",
+  "patterns": [
+		{ "include": "#import" },
+		{ "include": "#preprocessor" },
+		{ "include": "#comment" },
+		{ "include": "#type" },
+		{ "include": "#identifier" },
+		{ "include": "#propertyAccessor" },
+		{ "include": "#builtinTypes" },
+		{ "attribute": "#attribute" }
+	],
+  "repository": {
+    "import": {
+			"name": "keyword.other",
+			"match": "\\bimport\\b"
+		},
+		"preprocessor": {
+			"name": "keyword.other",
+			"match": "#(include|define|ifdef|if|else|endif|pragma)"
+		},
+		"comment": {
+			"patterns": [
+				{ "include": "#commentLine" },
+				{ "include": "#commentBlock" }
+			]
+		},
+		"commentLine": {
+			"match": "//.*",
+			"name": "comment.line.double-slash"
+		},
+		"commentBlock": {
+			"begin": "/\\*",
+			"end": "\\*/",
+			"name": "comment.block"
+		},
+		"type": {
+			"name": "storage.type",
+			"match": "\\b(runtimeclass|interface|enum|struct|delegate|event)\\b"
+		},
+		"builtinTypes": {
+			"name": "support.type",
+			"match": "\\b(Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Char|String|Single|Double|Boolean|Guid|void)\\b"
+		},
+		"identifier": {
+			"match": "(\\w[\\w\\d_]*\\.)*(\\w[\\w\\d_]*)",
+			"name": "entity.type.name"
+		},
+		"propertyAccessor": {
+			"name": "entity.name.function",
+			"match": "\\b(get|set)\\b"
+		},
+		"attribute": {
+			"name": "entity.other.attribute-name",
+			"begin": "\\[",
+			"end": "\\]"
+		}
+  }
+}	
