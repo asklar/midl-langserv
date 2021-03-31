@@ -27,7 +27,11 @@
 				"extensions": [
 					".idl"
 				],
-				"aliases": ["MIDL", "MIDL3", "MIDLRT"]
+				"aliases": [
+					"MIDL",
+					"MIDL3",
+					"MIDLRT"
+				]
 			}
 		],
 		"grammars": [
