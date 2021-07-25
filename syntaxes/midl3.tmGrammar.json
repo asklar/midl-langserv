@@ -11,7 +11,7 @@
 		{ "attribute": "#attribute" }
 	],
   "repository": {
-    "import": {
+    	"import": {
 			"name": "keyword.other",
 			"match": "\\bimport\\b"
 		},
@@ -36,7 +36,7 @@
 		},
 		"type": {
 			"name": "storage.type",
-			"match": "\\b(runtimeclass|interface|enum|struct|delegate|event)\\b"
+			"match": "\\b(namespace|runtimeclass|interface|enum|struct|delegate|event)\\b"
 		},
 		"builtinTypes": {
 			"name": "support.type",

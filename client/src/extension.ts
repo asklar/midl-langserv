@@ -16,20 +16,36 @@ import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokens
 
 let client: LanguageClient;
 
-export const tokenTypes = new Map<string, number>();
+export enum TokenType {
+	comment, string, keyword, number, regexp, operator, namespace,
+	type, struct, class, interface, enum, typeParameter, function,
+	method, macro, variable, parameter, property, label,
+	preProcessor,
+	attribute,
+	identifier,
+	scopeToken,
+	semicolon,
+	colon,
+	comma
+}
+
+
+export const tokenTypes = new Map<TokenType, number>();
 export const tokenModifiers = new Map<string, number>();
 
+function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
+    return Object.keys(obj).filter(k => Number.isNaN(+k)) as K[];
+}
+
 function legend() {
-	const tokenTypesLegend = [
-		'comment', 'string', 'keyword', 'number', 'regexp', 'operator', 'namespace',
-		'type', 'struct', 'class', 'interface', 'enum', 'typeParameter', 'function',
-		'method', 'macro', 'variable', 'parameter', 'property', 'label'
-	];
-	tokenTypesLegend.forEach((tokenType, index) => tokenTypes.set(tokenType, index));
+	const tokenTypesLegend = enumKeys(TokenType).map(v => v as string);
+	
+	
+	tokenTypesLegend.forEach((tokenType, index) => tokenTypes.set(TokenType[tokenType] , index));
 
 	const tokenModifiersLegend = [
 		'declaration', 'documentation', 'readonly', 'static', 'abstract', 'deprecated',
-		'modification', 'async'
+		'modification', 'async', 'defaultLibrary',
 	];
 	tokenModifiersLegend.forEach((tokenModifier, index) => tokenModifiers.set(tokenModifier, index));
 
