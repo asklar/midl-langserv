@@ -1,7 +1,7 @@
 import { CancellationToken, DocumentSemanticTokensProvider, SemanticTokens, SemanticTokensBuilder, TextDocument } from 'vscode';
 import { TokenType, tokenTypes, tokenModifiers } from './extension';
 
-type ContextRole = 'name' | 'returnType' | 'enumValue';
+type ContextRole = 'name' | 'returnType' | 'enumValue' | 'extends';
 
 interface IParsedToken {
   line: number;
@@ -175,14 +175,15 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
       case 'interface':
       case 'enum':
       case 'struct':
-      return TokenType[kindName];
+        return TokenType[kindName];
     }
     return TokenType[kindName];
   }
   
   private _parseText(text: string): IParsedToken[] {
     const r: IParsedToken[] = [];
-    
+    this.parsedModel = [];
+
     let inString = false;
     let line = 0;
     let col = 0;
@@ -306,9 +307,10 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                  currentScope.pop();
                }
             }
-            
-            if (currentScope.size() == 0) {
-              if (prevContent === 'namespace') {
+
+            if (prevContent === 'namespace') {
+              if (currentScope.size() === 0 ||
+                  currentScope.peek().type === ElementType.Namespace) {
                 const ns : Namespace = {
                   type: ElementType.Namespace,
                   id: currentContent,
@@ -316,8 +318,10 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                 };
                 currentScope.push(ns);
                 this.parsedModel.push(ns);
+              } else {
+                // TODO: error - namespaces can only be top level or inside namespaces
               }
-            } else {
+            } else if (currentScope.size() !== 0) {
               switch (currentScope.peek().type) {
                 case ElementType.Namespace: {
                   const ns = currentScope.peek() as Namespace;   
@@ -353,6 +357,7 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                       (prevToken.tokenType === TokenType.colon || prevToken.tokenType === TokenType.comma)) {
                         // TODO: should error if we find more than one colon
                     _type.extends.push(currentContent);
+                    roleInContext = 'extends';
                     break;
                   } else if (tokenType === TokenType.identifier || tokenType === TokenType.type) {
                     // a method / property declaration: MyType Foo { get; } or MyType Foo();
@@ -517,7 +522,15 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
           }
           case ElementType.Type: {
             const _type = entry.context as Type;
-            entry.tokenType = MidlDocumentSemanticTokensProvider.GetTokenTypeForType(_type.kind);
+            switch (entry.roleInContext) {
+              case 'extends':
+                entry.tokenType = this.GetTypeKindTokenType(content);
+                break;
+              default:
+                entry.tokenType = MidlDocumentSemanticTokensProvider.GetTokenTypeForType(_type.kind);
+                break;
+            }
+            
             break;
           }
           case ElementType.Member: {
