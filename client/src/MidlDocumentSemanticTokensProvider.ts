@@ -197,7 +197,7 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
           col: col,
           token: text[i],
         });
-        break;
+         break;
       }
       lastProcessed = i;
       if (!inString) {
@@ -361,14 +361,26 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                     } else {
                       roleInContext = 'returnType';
                     }
+
+                    let kind: MemberKind = undefined;
+
+                    if (_type.kind === 'enum' || _type.kind === 'struct') {
+                      kind = 'field';
+                    } else if (prevToken.tokenType === TokenType.keyword && prevContent === 'event') {
+                      kind = 'event';
+                    }
+
                     const member : Member = {
                       type: ElementType.Member,
                       id: currentContent,
                       displayName: currentContent,
-                      kind: (_type.kind === 'enum' || _type.kind === 'struct') ? 'field' : undefined, // we don't know yet what it is
+                      kind: kind,
                     };
                     _type.members.push(member);
                     currentScope.push(member);
+                  } else if (tokenType === TokenType.semicolon && currentScope.peek().type === ElementType.Type) {
+                    // delegates like `delegate D(X x);`
+                    currentScope.pop();
                   }
                   break;
                 }
@@ -394,8 +406,9 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                 case ElementType.ParameterScope: {
                   const paramScope = currentScope.peek() as ParameterScope;
                   
-                  if (tokenType === TokenType.identifier) {
-                    if (paramScope.params.length == 0) {
+                  if (tokenType === TokenType.identifier || tokenType === TokenType.type) {
+                    if (paramScope.params.length == 0 || 
+                        paramScope.params[paramScope.params.length - 1].id !== undefined) {
                       const p: Parameter = {
                         type: ElementType.Parameter,
                         paramType: currentContent,
@@ -540,6 +553,9 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
         }
       }
     }
+
+
+    console.log(JSON.stringify(this.parsedModel, null, 2));
     return r;
   }
   
