@@ -41,6 +41,11 @@
 				"path": "./syntaxes/midl3.tmGrammar.json"
 			}
 		],
+		"configurationDefaults": {
+			"[midl3]": {
+				"editor.semanticHighlighting.enabled": true
+			}
+		},
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",
