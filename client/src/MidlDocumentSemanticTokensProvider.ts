@@ -1,6 +1,7 @@
-import { parse } from 'path';
 import { CancellationToken, DocumentSemanticTokensProvider, SemanticTokens, SemanticTokensBuilder, TextDocument } from 'vscode';
 import { TokenType, tokenTypes, tokenModifiers } from './extension';
+
+type ContextRole = 'name' | 'returnType' | 'enumValue';
 
 interface IParsedToken {
   line: number;
@@ -9,8 +10,8 @@ interface IParsedToken {
   tokenType: TokenType; //string;
   tokenModifiers: string[];
   startIndex: number;
-  context?: Namespace | Type | Member;
-  roleInContext?: string;
+  context?: Namespace | Type | Member | ParameterScope;
+  roleInContext?: ContextRole;
 }
 
 class Stack<T>  {
@@ -42,17 +43,19 @@ enum ElementType {
   Namespace,
   Type,
   Member,
-  Parameters,
+  ParameterScope,
+  Parameter,
   Property,
 };
 
 type Parameter = {
+  type: ElementType.Parameter,
   paramType: string;
   id: string;
 };
 
 type ParameterScope = {
-  type: ElementType.Parameters,
+  type: ElementType.ParameterScope,
   params: Parameter[];
 };
 
@@ -88,7 +91,7 @@ type Namespace = {
   types: Type[],
 };
 
-type ParseError {
+type ParseError = {
   line: number,
   col: number,
   token: string,
@@ -139,28 +142,32 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
     { key: /^(get|set)\b/, value: TokenType.method },
     { key: /^import\b/, value: TokenType.keyword},
     { key: /^\[.*\]/, value: TokenType.attribute },
-    { key: /^(namespace|runtimeclass|interface|enum|delegate|event|get|set)\b/, value: TokenType.keyword },
+    { key: /^(namespace|runtimeclass|struct|interface|enum|delegate|event|get|set)\b/, value: TokenType.keyword },
     { key: /^[\(\)\{\}]/, value: TokenType.scopeToken },
     { key: /^;/, value: TokenType.semicolon },
     { key: /^:/, value: TokenType.colon },
     { key: /^,/, value: TokenType.comma },
     { key: /^(Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Char|String|Single|Double|Boolean|Guid|void)\b/, value: TokenType.type, modifier: 'defaultLibrary' },
+    { key: /^=/, value: TokenType.operator },
+    { key: /^\d+/, value: TokenType.number },
     { key: /^([\w\d_]+\.)*[\w\d_]+/, value: TokenType.identifier},
   ];
   
   parsedModel : Namespace[]  = [];
   errors: ParseError[] = [];
-
+  
   private static GetTokenTypeForMember(memberKind: string) {
     switch (memberKind) {
       case 'method': return TokenType.method;
       case 'ctor': return TokenType.method;
       case 'event': return TokenType.method;
       case 'property': return TokenType.property;
-      case 'field': return TokenType.property;;
+      case 'field': return TokenType.property;
     }
-  }
 
+    return undefined;
+  }
+  
   private static GetTokenTypeForType(kindName: string) {
     switch (kindName) {
       case 'runtimeclass':	return TokenType.class;
@@ -180,7 +187,7 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
     let line = 0;
     let col = 0;
     
-    const currentScope = new Stack<Namespace|Type|Member|ParameterScope|PropertyScope>();
+    const currentScope = new Stack<Namespace|Type|Member|ParameterScope|Parameter|PropertyScope>();
     let lastProcessed = -1;
     for (let i = 0; i < text.length; ) {
       if (lastProcessed === i) {
@@ -225,19 +232,20 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
         for (const t of this.tokenStringMap) {
           const m = now.match(t.key);
           if (m !== null) {
-            let roleInContext: string = undefined;
+            let roleInContext: ContextRole = undefined;
             const len = m[0].length;
             const currentContent = text.substr(i, len);
             var tokenType = t.value;
             
-            const prevToken = r.length > 1 ? r[r.length - 1] : null;
+            const prevToken = r.length > 0 ? r[r.length - 1] : null;
             const prevContent = prevToken ? text.substr(prevToken.startIndex, prevToken.length) : null;
             
             if (now.startsWith('{')) {
               // new scope is started, maybe we need to correct the properties on the new scope
-              if (currentScope.peek().type === ElementType.Member) {
+              if (currentScope.size() > 0 && 
+                  currentScope.peek().type === ElementType.Member) {
                 const member = currentScope.peek() as Member;
-                member.kind = 'property'; // TODO, need to disambiguate between enum values, struct fields, and class properties
+                member.kind = 'property';
                 const property: PropertyScope = {
                   type: ElementType.Property,
                 };
@@ -247,27 +255,56 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
             } else if (now.startsWith('}')) {
               currentScope.pop();
             } else if (now.startsWith('(')) {
-              if (prevToken.tokenType === TokenType.identifier) {
-                if (currentScope.peek().type == ElementType.Member) {
-                  const member = currentScope.peek() as Member;
-                  if (currentScope.peek(-1).type === ElementType.Type) {
-                    const _type = currentScope.peek(-1) as Type;
-                    if (_type.id === member.displayName) {
-                      member.kind = 'ctor';
-                    } else {
-                      member.kind = 'method';
-                    }
+              if (prevToken.tokenType === TokenType.identifier || prevToken.tokenType === TokenType.class) {
+                if (currentScope.peek().type == ElementType.Type) {
+                  const _type = currentScope.peek() as Type;
+                  if (_type.kind === 'delegate') {
+                    const invokeParams: ParameterScope = {
+                      params: [],
+                      type: ElementType.ParameterScope,
+                    };
+                    const invoke: Member = {
+                      id: 'Invoke',
+                      displayName: '',
+                      kind: 'method',
+                      type: ElementType.Member,
+                      paramScope: invokeParams,
+                    };
+
+                    _type.members.push(invoke);
+                    currentScope.push(invokeParams);
                   }
-                  const paramScope: ParameterScope = {
-                    type: ElementType.Parameters,
-                    params: []
-                  };
-                  member.paramScope = paramScope;
-                  currentScope.push(paramScope);
+                } else if (currentScope.peek().type == ElementType.Member) {
+                  const member = currentScope.peek() as Member;
+                  if (member.kind === 'method' || member.kind === 'ctor') {
+                    if (currentScope.peek(-1).type === ElementType.Type) {
+                      const _type = currentScope.peek(-1) as Type;
+                      if (_type.id === member.displayName) {
+                        member.kind = 'ctor';
+                      } else {
+                        member.kind = 'method';
+                      }
+                    }
+                    const paramScope: ParameterScope = {
+                      type: ElementType.ParameterScope,
+                      params: []
+                    };
+                    member.paramScope = paramScope;
+                    currentScope.push(paramScope);
+                  }
+                } else {
+                  // TODO: error
                 }
               }
             } else if (currentContent === ')') {
               currentScope.pop();
+            } else if (currentContent === ',') {
+              if (currentScope.peek().type === ElementType.Member &&
+               currentScope.peek(-1).type === ElementType.Type &&
+               (currentScope.peek(-1) as Type).kind === 'enum'
+               ) {
+                 currentScope.pop();
+               }
             }
             
             if (currentScope.size() == 0) {
@@ -308,13 +345,16 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                   }
                   break;
                 }
-
+                
                 case ElementType.Type: {
                   const _type = currentScope.peek() as Type;
-                  if (prevToken.tokenType === TokenType.colon || prevToken.tokenType === TokenType.comma) {
+                  if (_type.kind !== 'enum' &&
+                      _type.kind !== 'struct' &&
+                      (prevToken.tokenType === TokenType.colon || prevToken.tokenType === TokenType.comma)) {
+                        // TODO: should error if we find more than one colon
                     _type.extends.push(currentContent);
                     break;
-                  } else if (tokenType === TokenType.identifier) {
+                  } else if (tokenType === TokenType.identifier || tokenType === TokenType.type) {
                     // a method / property declaration: MyType Foo { get; } or MyType Foo();
                     if (_type.kind === 'enum') {
                       roleInContext = 'enumValue';
@@ -325,14 +365,14 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                       type: ElementType.Member,
                       id: currentContent,
                       displayName: currentContent,
-                      kind: _type.kind === 'enum' ? 'field' : undefined, // we don't know yet what it is
+                      kind: (_type.kind === 'enum' || _type.kind === 'struct') ? 'field' : undefined, // we don't know yet what it is
                     };
                     _type.members.push(member);
                     currentScope.push(member);
                   }
                   break;
                 }
-
+                
                 case ElementType.Member: {
                   const member = currentScope.peek() as Member;
                   if (tokenType === TokenType.identifier) {
@@ -347,26 +387,27 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                     }
                   } else if (tokenType === TokenType.semicolon) {
                     currentScope.pop();
-                  } else if (member.kind === 'property') {
-
                   }
                   break;
                 }
-
-                case ElementType.Parameters: {
+                
+                case ElementType.ParameterScope: {
                   const paramScope = currentScope.peek() as ParameterScope;
-
+                  
                   if (tokenType === TokenType.identifier) {
                     if (paramScope.params.length == 0) {
                       const p: Parameter = {
+                        type: ElementType.Parameter,
                         paramType: currentContent,
                         id: undefined,
                       };
+                      roleInContext = 'returnType';
                       paramScope.params.push(p);
                     } else {
                       const p = paramScope.params[paramScope.params.length - 1];
                       if (p.id === undefined && p.paramType) {
                         p.id = currentContent;
+                        roleInContext = 'name';
                       } else {
                         // TODO: Error
                       }
@@ -374,11 +415,11 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
                   }
                   break;
                 }
-
+                
                 case ElementType.Property: {
                   const propScope = currentScope.peek() as PropertyScope;
                   const member = currentScope.peek(-1) as Member;
-
+                  
                   if (tokenType === TokenType.method) {
                     member.accessors.push(currentContent);
                   } else {
@@ -389,17 +430,18 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
               }
             }
             
-            let context: Namespace | Type | Member | undefined = undefined;
+            let context: Namespace | Type | Member | ParameterScope | undefined = undefined;
             if (currentScope.size() > 0) {
               switch (currentScope.peek().type) {
                 case ElementType.Namespace:
                 case ElementType.Type:
                 case ElementType.Member:
-                  context = currentScope.peek() as (Namespace|Type|Member);
-                  break;
+                case ElementType.ParameterScope:
+                context = currentScope.peek() as (Namespace|Type|Member|ParameterScope);
+                break;
               }
             }
-
+            
             const modifiers = t.modifier ? [ t.modifier ] : [];
             r.push({
               line: line,
@@ -453,9 +495,13 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
     */
     for (const entry of r) {
       if (entry.tokenType === TokenType.identifier && entry.context !== undefined) {
+        const content = text.substr(entry.startIndex, entry.length);
+
         switch (entry.context.type) {
-          case ElementType.Namespace:
-            entry.tokenType = TokenType.namespace; break;
+          case ElementType.Namespace: {
+            entry.tokenType = TokenType.namespace;
+            break;
+          }
           case ElementType.Type: {
             const _type = entry.context as Type;
             entry.tokenType = MidlDocumentSemanticTokensProvider.GetTokenTypeForType(_type.kind);
@@ -463,13 +509,31 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
           }
           case ElementType.Member: {
             const member = entry.context as Member;
-            const content = text.substr(entry.startIndex, entry.length);
-            if (entry.roleInContext === 'returnType') {
-              entry.tokenType = member.kind === 'ctor' ? TokenType.method : this.GetTypeKindTokenType(content);
-            } else if (entry.roleInContext === 'id') {
-              entry.tokenType = MidlDocumentSemanticTokensProvider.GetTokenTypeForMember(member.kind);
-            } else if (entry.roleInContext === undefined) {
-              entry.tokenType = TokenType.identifier;
+            switch (entry.roleInContext) {
+              case 'returnType':
+                entry.tokenType = member.kind === 'ctor' ? TokenType.method : this.GetTypeKindTokenType(content);
+                break;
+              case 'name':
+                entry.tokenType = MidlDocumentSemanticTokensProvider.GetTokenTypeForMember(member.kind);
+                break;
+              case 'enumValue':
+                entry.tokenType = TokenType.enumMember;
+                break;
+              default:
+                entry.tokenType = TokenType.identifier;
+                break;
+            }
+            break;
+          }
+          case ElementType.ParameterScope: {
+            const parameter = entry.context as ParameterScope;
+            switch (entry.roleInContext) {
+              case 'returnType':
+                entry.tokenType = this.GetTypeKindTokenType(content);
+                break;
+              case 'name':
+                entry.tokenType = TokenType.parameter;
+                break;
             }
             break;
           }
@@ -478,8 +542,8 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
     }
     return r;
   }
-
-
+  
+  
   GetTypeKindTokenType(fullName: string): TokenType {
     const nsName = fullName.substring(0, fullName.lastIndexOf('.'));
     const name = fullName.substring(fullName.lastIndexOf('.') + 1);
@@ -490,7 +554,7 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
         return MidlDocumentSemanticTokensProvider.GetTokenTypeForType(_type.kind);
       }
     }
-
+    
     return TokenType.type;
   }
   
