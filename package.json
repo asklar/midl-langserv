@@ -1,14 +1,15 @@
 {
-	"name": "lsp-sample",
-	"description": "A language server example",
+	"name": "midlrt-language-server",
+  "displayName": "MIDL RT language support",
+	"description": "Language server for MIDL RT",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
 	"version": "1.0.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/Microsoft/vscode-extension-samples"
+		"url": "https://github.com/asklar/midl_langserv"
 	},
-	"publisher": "vscode-samples",
+	"publisher": "AlexanderSklarMSFT",
 	"categories": [],
 	"keywords": [
 		"multi-root ready"
@@ -83,6 +84,7 @@
 		"@typescript-eslint/parser": "^2.3.0",
 		"eslint": "^6.4.0",
 		"mocha": "^8.1.1",
-		"typescript": "^4.2.2"
+		"typescript": "^4.2.2",
+		"vsce": "^1.96.1"
 	}
 }
