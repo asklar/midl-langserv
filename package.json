@@ -1,10 +1,11 @@
 {
-	"name": "midlrt-language-server",
-  "displayName": "MIDL RT language support",
-	"description": "Language server for MIDL RT",
+	"name": "midl3-language-server",
+  "displayName": "MIDL 3.0 language support",
+	"description": "Language server for MIDL 3.0",
+  "icon": "images/midl3.png",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/asklar/midl_langserv"
@@ -18,7 +19,7 @@
 		"vscode": "^1.43.0"
 	},
 	"activationEvents": [
-		"onLanguage:plaintext"
+		"onLanguage:midl3"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
@@ -49,15 +50,15 @@
 		},
 		"configuration": {
 			"type": "object",
-			"title": "Example configuration",
+			"title": "MIDL 3.0 language support",
 			"properties": {
-				"languageServerExample.maxNumberOfProblems": {
+				"midl3.maxNumberOfProblems": {
 					"scope": "resource",
 					"type": "number",
 					"default": 100,
 					"description": "Controls the maximum number of problems produced by the server."
 				},
-				"languageServerExample.trace.server": {
+				"midl3.trace.server": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
@@ -76,7 +77,8 @@
 		"compile": "tsc -b",
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
-		"test": "sh ./scripts/e2e.sh"
+		"test": "sh ./scripts/e2e.sh",
+    "package": "vsce package"
 	},
 	"devDependencies": {
 		"@types/mocha": "^8.0.3",
