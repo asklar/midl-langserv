@@ -1,0 +1,5 @@
+namespace Foo {
+  runtimeclass RTC {
+    int x { get; }
+  }
+}

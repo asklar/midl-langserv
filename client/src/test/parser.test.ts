@@ -3,9 +3,31 @@ import { suite, test } from 'mocha';
 import * as assert from 'assert';
 import { MidlParser, ParserBase } from '../MidlParser';
 import { TokenType } from '../TokenType';
-
+import * as glob from 'glob';
+import * as path from 'path';
+import * as fs from 'fs';
 
 suite('Parser tests', () => {
+
+  
+  const idlRoot = path.join(__dirname, '../../src/test');
+	const testsRoot = __dirname;
+
+  glob('*.idl', {cwd: idlRoot}, (err, files) => {
+    if (err) {
+      throw 'Error';
+    }
+    files.forEach(f => {
+      console.log(`Test file: ${f}`);
+      const base = path.basename(f, path.extname(f));
+      const snap = path.join(testsRoot, base + '.snap.js');
+      const idl = fs.readFileSync(path.join(idlRoot, f)).toString();
+      const expected = require(snap);
+      test(base, async () => {
+        await testParser(idl, expected);
+      })
+    });
+  });
 
   test('empty', async () => {
     await testParser('', {

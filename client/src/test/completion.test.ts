@@ -8,13 +8,15 @@ import * as assert from 'assert';
 import { getDocUri, activate } from './helper';
 
 suite('Should do completion', () => {
-	const docUri = getDocUri('completion.txt');
+	const docUri = getDocUri('completion.idl');
 
 	test('Completes JS/TS in txt file', async () => {
 		await testCompletion(docUri, new vscode.Position(0, 0), {
 			items: [
-				{ label: 'JavaScript', kind: vscode.CompletionItemKind.Text },
-				{ label: 'TypeScript', kind: vscode.CompletionItemKind.Text }
+				{ label: 'interface', kind: vscode.CompletionItemKind.Keyword },
+        { label: 'interface_name', kind: vscode.CompletionItemKind.Keyword },
+        { label: 'target_interface', kind: vscode.CompletionItemKind.Keyword },
+        { label: 'default_interface', kind: vscode.CompletionItemKind.Keyword },
 			]
 		});
 	});

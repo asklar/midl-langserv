@@ -8,13 +8,11 @@ import * as assert from 'assert';
 import { getDocUri, activate } from './helper';
 
 suite('Should get diagnostics', () => {
-	const docUri = getDocUri('diagnostics.txt');
+	const docUri = getDocUri('diagnostics.idl');
 
-	test('Diagnoses uppercase texts', async () => {
+	test('Diagnoses classic MIDL types', async () => {
 		await testDiagnostics(docUri, [
-			{ message: 'ANY is all uppercase.', range: toRange(0, 0, 0, 3), severity: vscode.DiagnosticSeverity.Warning, source: 'ex' },
-			{ message: 'ANY is all uppercase.', range: toRange(0, 14, 0, 17), severity: vscode.DiagnosticSeverity.Warning, source: 'ex' },
-			{ message: 'OS is all uppercase.', range: toRange(0, 18, 0, 20), severity: vscode.DiagnosticSeverity.Warning, source: 'ex' }
+			{ message: 'int is a classic MIDL type, not a MIDL 3 type.', range: toRange(2, 4, 2, 7), severity: vscode.DiagnosticSeverity.Error, source: 'ex' },
 		]);
 	});
 });
