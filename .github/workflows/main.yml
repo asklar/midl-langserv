@@ -34,6 +34,9 @@ jobs:
       - name: Build and package vsix
         run: yarn package
 
+      - name: Test parser
+        run: npx mocha client/out/test/parser.test.js
+
       - name: Upload VSIX
         uses: actions/upload-artifact@v2.2.4
         with:
