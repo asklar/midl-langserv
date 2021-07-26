@@ -1,4 +1,4 @@
-import { Namespace, ParseError, IParsedToken, Scopeable, ContextRole, ElementType, Member, PropertyScope, Type, ParameterScope, TypeKind, MemberKind, Parameter } from './Model';
+import { Namespace, ParseError, IParsedToken, Element, ContextRole, ElementType, Member, PropertyScope, Type, ParameterScope, TypeKind, MemberKind, Parameter } from './Model';
 import { Stack } from './Stack';
 import { TokenType } from './TokenType';
 
@@ -70,7 +70,7 @@ export class MidlParser extends ParserBase {
     super();
     let inString = false;
     
-    const currentScope = new Stack<Scopeable>();
+    const currentScope = new Stack<Element>();
     let lastProcessed = -1;
 
     while (this.currentIdx < text.length) {

@@ -92,4 +92,3 @@ export type ParseError = {
 };
 
 export type ContextRole = 'name' | 'returnType' | 'enumValue' | 'extends';
-export type Scopeable = Namespace | Type | Member | ParameterScope | Parameter | PropertyScope;
