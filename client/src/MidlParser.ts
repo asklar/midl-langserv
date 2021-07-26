@@ -67,6 +67,7 @@ export class MidlParser {
     
     const currentScope = new Stack<Scopeable>();
     let lastProcessed = -1;
+
     while (this.currentIdx < text.length) {
       if (lastProcessed === this.currentIdx) {
         // we didn't match anything... error out
@@ -135,9 +136,9 @@ export class MidlParser {
                 if (prevToken.tokenType !== TokenType.semicolon) {
                   this.AddError(`Property accessors must be followed by a semicolon`);
                 }
-                currentScope.pop();
-                if (currentScope.peek() instanceof Member) {
-                  const member = currentScope.peek() as Member;
+                const last2 = currentScope.pop();
+                if (last2 instanceof Member) {
+                  const member = last2 as Member;
                   if (member.accessors.length === 0) {
                     this.AddError(`Property ${member.displayName} has no accessors`);
                   } else {
@@ -364,7 +365,7 @@ export class MidlParser {
               }
               
               const modifiers = t.modifier ? [ t.modifier ] : [];
-              this.parsedTokens.push({
+              const newParsedToken: IParsedToken = {
                 line: this.line,
                 startCharacter: this.col,
                 length: len,
@@ -373,7 +374,8 @@ export class MidlParser {
                 startIndex: this.currentIdx,
                 context: context,
                 roleInContext: roleInContext,
-              });
+              };
+              this.parsedTokens.push(newParsedToken);
               this.currentIdx += len;
               
               if (m[0].match(/(\r\n|\r|\n)/)) {
@@ -407,56 +409,58 @@ export class MidlParser {
     
     private RemapIdentifiers() {
       for (const entry of this.parsedTokens) {
-        if (entry.tokenType === TokenType.identifier && entry.context !== undefined) {
-          const content = this.text.substr(entry.startIndex, entry.length);
-          
-          switch (entry.context.type) {
-            case 'Namespace': {
-              entry.tokenType = TokenType.namespace;
-              break;
-            }
-            case 'Type': {
-              const _type = entry.context as Type;
-              switch (entry.roleInContext) {
-                case 'extends':
-                entry.tokenType = this.GetTypeKindTokenType(content);
-                break;
-                default:
-                entry.tokenType = MidlParser.GetTokenTypeForType(_type.kind);
+        if (entry.context !== undefined) {
+          if (entry.tokenType === TokenType.identifier) {
+            const content = this.text.substr(entry.startIndex, entry.length);
+            
+            switch (entry.context.type) {
+              case 'Namespace': {
+                entry.tokenType = TokenType.namespace;
                 break;
               }
-              
-              break;
-            }
-            case 'Member': {
-              const member = entry.context as Member;
-              switch (entry.roleInContext) {
-                case 'returnType':
-                entry.tokenType = member.kind === 'ctor' ? TokenType.method : this.GetTypeKindTokenType(content);
-                break;
-                case 'name':
-                entry.tokenType = MidlParser.GetTokenTypeForMember(member.kind);
-                break;
-                case 'enumValue':
-                entry.tokenType = TokenType.enumMember;
-                break;
-                default:
-                entry.tokenType = TokenType.identifier;
+              case 'Type': {
+                const _type = entry.context as Type;
+                switch (entry.roleInContext) {
+                  case 'extends':
+                  entry.tokenType = this.GetTypeKindTokenType(content);
+                  break;
+                  default:
+                  entry.tokenType = MidlParser.GetTokenTypeForType(_type.kind);
+                  break;
+                }
+                
                 break;
               }
-              break;
-            }
-            case 'ParameterScope': {
-              const parameter = entry.context as ParameterScope;
-              switch (entry.roleInContext) {
-                case 'returnType':
-                entry.tokenType = this.GetTypeKindTokenType(content);
-                break;
-                case 'name':
-                entry.tokenType = TokenType.parameter;
+              case 'Member': {
+                const member = entry.context as Member;
+                switch (entry.roleInContext) {
+                  case 'returnType':
+                  entry.tokenType = member.kind === 'ctor' ? TokenType.method : this.GetTypeKindTokenType(content);
+                  break;
+                  case 'name':
+                  entry.tokenType = MidlParser.GetTokenTypeForMember(member.kind);
+                  break;
+                  case 'enumValue':
+                  entry.tokenType = TokenType.enumMember;
+                  break;
+                  default:
+                  entry.tokenType = TokenType.identifier;
+                  break;
+                }
                 break;
               }
-              break;
+              case 'ParameterScope': {
+                const parameter = entry.context as ParameterScope;
+                switch (entry.roleInContext) {
+                  case 'returnType':
+                  entry.tokenType = this.GetTypeKindTokenType(content);
+                  break;
+                  case 'name':
+                  entry.tokenType = TokenType.parameter;
+                  break;
+                }
+                break;
+              }
             }
           }
         }
