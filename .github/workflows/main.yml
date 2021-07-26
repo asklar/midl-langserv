@@ -28,6 +28,9 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.3.0
 
+      - name: npm install
+        run: npm install
+        
       # Runs a single command using the runners shell
       - name: Build and package vsix
         run: yarn package
