@@ -6,8 +6,15 @@ function last<T>(a: T[]) {
   return a[a.length - 1];
 }
 
-export class MidlParser {
-  private startsWithEol(text: string) {
+export class ParserBase {
+  public readonly parsedModel: Namespace[] = [];
+  public readonly errors: ParseError[] = [];
+  public readonly parsedTokens: IParsedToken[] = [];
+};
+
+export class MidlParser extends ParserBase {
+
+  private static startsWithEol(text: string) {
     if (text.startsWith('\r\n')) return 2;
     else if (text.startsWith('\r') || text.startsWith('\n')) return 1;
     else return 0;
@@ -15,8 +22,9 @@ export class MidlParser {
   
   private tokenStringMap : Array<{key: string | RegExp, value: TokenType, modifier?: string}> = [
     { key: /^"[^"]*"/, value: TokenType.string },
-    { key: /^\/\/.*(\r\n|\r|\n)/, value: TokenType.comment },
-    { key: /^#(include|pragma|define|ifdef|endif|if)\b.*(\r\n|\r|\n)/, value: TokenType.preProcessor },
+    { key: /^\/\/.*(\r\n|\r|\n)?/, value: TokenType.comment },
+    { key: /^\/\*.*\*\//s, value: TokenType.comment},
+    { key: /^#(include|pragma|define|ifdef|endif|if)\b.*(\r\n|\r|\n)?/, value: TokenType.preProcessor },
     { key: /^(get|set)\b/, value: TokenType.method },
     { key: /^import\b/, value: TokenType.keyword},
     { key: /^\[.*\]/, value: TokenType.attribute },
@@ -31,9 +39,6 @@ export class MidlParser {
     { key: /^([\w\d_]+\.)*[\w\d_]+/, value: TokenType.identifier},
   ];
   
-  parsedModel : Namespace[]  = [];
-  errors: ParseError[] = [];
-  
   private static GetTokenTypeForMember(memberKind: string) {
     switch (memberKind) {
       case 'method': return TokenType.method;
@@ -46,7 +51,6 @@ export class MidlParser {
     return undefined;
   }
   
-  public parsedTokens: IParsedToken[] = [];
   private static GetTokenTypeForType(kindName: string) {
     switch (kindName) {
       case 'runtimeclass':	return TokenType.class;
@@ -63,6 +67,7 @@ export class MidlParser {
   private currentIdx = 0;
   
   public constructor(public text: string) {
+    super();
     let inString = false;
     
     const currentScope = new Stack<Scopeable>();
@@ -88,7 +93,7 @@ export class MidlParser {
       }
       const now = text.substr(this.currentIdx);
       
-      const eolLength = this.startsWithEol(now);
+      const eolLength = MidlParser.startsWithEol(now);
       if (eolLength !== 0) {
         this.line++;
         this.col = 0;
@@ -115,7 +120,7 @@ export class MidlParser {
             const prevToken = this.parsedTokens.length > 0 ? last(this.parsedTokens) : null;
             const prevContent = prevToken ? text.substr(prevToken.startIndex, prevToken.length) : null;
             
-            if (now.startsWith('{')) {
+            if (currentContent === '{') {
               // new scope is started, maybe we need to correct the properties on the new scope
               if (currentScope.size() > 0 && 
               currentScope.peek() instanceof Member) {
@@ -125,7 +130,7 @@ export class MidlParser {
                 member.accessors = [];
                 currentScope.push(property);
               }
-            } else if (now.startsWith('}')) {
+            } else if (currentContent === '}') {
               const last = currentScope.pop();
               if (currentScope.size() !== 0 && currentScope.peek() instanceof Type) {
                 const type = currentScope.peek() as Type;
@@ -158,7 +163,7 @@ export class MidlParser {
                 }
                 
               }
-            } else if (now.startsWith('(')) {
+            } else if (currentContent === '(') {
               if (prevToken.tokenType === TokenType.identifier || prevToken.tokenType === TokenType.class) {
                 if (currentScope.peek() instanceof Type) {
                   const _type = currentScope.peek() as Type;
