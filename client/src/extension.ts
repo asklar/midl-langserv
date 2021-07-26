@@ -13,24 +13,9 @@ import {
 	TransportKind
 } from 'vscode-languageclient/node';
 import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokensProvider';
+import { TokenType } from './TokenType';
 
 let client: LanguageClient;
-
-
-export enum TokenType {
-  comment, string, keyword, number, regexp, operator, namespace,
-  type, struct, class, interface, enum, typeParameter, function,
-  method, macro, variable, parameter, property, label,
-  preProcessor,
-  attribute,
-  identifier,
-  scopeToken,
-  semicolon,
-  colon,
-  comma,
-  enumMember
-}
-
 
 export const tokenTypes = new Map<TokenType, number>();
 export const tokenModifiers = new Map<string, number>();
@@ -55,6 +40,9 @@ function legend() {
 }
 
 export function activate(context: ExtensionContext) {
+
+  console.log("MIDL3 LS - ACTIVATE");
+
 	// The server is implemented in node
 	let serverModule = context.asAbsolutePath(
 		path.join('server', 'out', 'server.js')
@@ -76,7 +64,7 @@ export function activate(context: ExtensionContext) {
 
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
-		// Register the server for plain text documents
+		// Register the server for IDL files
 		documentSelector: [{ scheme: 'file', language: 'midl3' }],
 		synchronize: {
 			// Notify the server about file changes to '.clientrc files contained in the workspace
@@ -92,6 +80,7 @@ export function activate(context: ExtensionContext) {
 		clientOptions
 	);
 
+  console.log("MIDL3 LS - STARTING");
 	context.subscriptions.push(languages.registerDocumentSemanticTokensProvider({ language: 'midl3'}, 
 		new MidlDocumentSemanticTokensProvider(), legend()));
 	// Start the client. This will also launch the server
