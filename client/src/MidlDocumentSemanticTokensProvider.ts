@@ -1,11 +1,19 @@
 import { CancellationToken, DocumentSemanticTokensProvider, SemanticTokens, SemanticTokensBuilder, TextDocument } from 'vscode';
 import { MidlParser } from './MidlParser';
 import { IParsedToken } from "./Model";
-import { tokenTypes, tokenModifiers } from './extension';
+import { tokenTypes, tokenModifiers, Synchronizer } from './extension';
 import { TokenType } from "./TokenType";
 
 export class MidlDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider {
+
+  public constructor(public readonly synchronizer: Synchronizer) {}
+
   async provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): Promise<SemanticTokens> {
+
+    const current = this.synchronizer.msgId;
+    await this.synchronizer.WaitForMsgId(current + 1);
+
+    console.log(`CLIENT id: ${this.synchronizer.msgId}`);
     const allTokens = this._parseText(document.getText());
     const builder = new SemanticTokensBuilder();
     allTokens.forEach((token) => {

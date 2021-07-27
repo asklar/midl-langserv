@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import * as path from 'path';
-import { workspace, ExtensionContext, languages, SemanticTokensLegend } from 'vscode';
+import { workspace, ExtensionContext, languages, SemanticTokensLegend, Diagnostic, DiagnosticSeverity } from 'vscode';
 
 import {
 	LanguageClient,
@@ -13,6 +13,8 @@ import {
 	TransportKind
 } from 'vscode-languageclient/node';
 import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokensProvider';
+import { MidlParser } from './MidlParser';
+import { ParseError } from './Model';
 import { TokenType } from './TokenType';
 
 let client: LanguageClient;
@@ -39,6 +41,16 @@ function legend() {
 	return new SemanticTokensLegend(tokenTypesLegend, tokenModifiersLegend);
 }
 
+export class Synchronizer {
+  public msgId = -1;
+
+  public WaitForMsgId(i: number) {
+    let n = 0;
+    while (this.msgId < i && n++ < 100) {
+      setTimeout(() => {}, 50);
+    }
+  }
+}
 export function activate(context: ExtensionContext) {
 
   console.log("MIDL3 LS - ACTIVATE");
@@ -81,8 +93,21 @@ export function activate(context: ExtensionContext) {
 	);
 
   console.log("MIDL3 LS - STARTING");
+
+  const synchronizer = new Synchronizer();
+
+  client.onReady().then(() => {
+    client.onNotification('custom/parsedModel', (parsedModel: any) => {
+      console.log(`Received parsed model: ${JSON.stringify(parsedModel)}`);
+      synchronizer.msgId = parsedModel.id;
+      const d = client.diagnostics.get(parsedModel.uri);
+      const newErrors = [...d, ...(parsedModel.errors)];
+      // update client state with parsed model
+    });
+  });
+
 	context.subscriptions.push(languages.registerDocumentSemanticTokensProvider({ language: 'midl3'}, 
-		new MidlDocumentSemanticTokensProvider(), legend()));
+		new MidlDocumentSemanticTokensProvider(synchronizer), legend()));
 	// Start the client. This will also launch the server
 	client.start();
 }

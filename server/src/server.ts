@@ -128,10 +128,24 @@ documents.onDidClose(e => {
 	documentSettings.delete(e.document.uri);
 });
 
+let msgId = 0;
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
+  connection.sendNotification('custom/parsedModel', {
+    id: msgId++,
+    uri: change.document.uri,
+    errors: [
+      {
+        message: 'from server',
+        range: {
+          start: change.document.positionAt(0),
+          end: change.document.positionAt(3),
+        }
+      }
+    ]
+  });
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {

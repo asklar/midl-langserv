@@ -1,3 +1,4 @@
+import { Uri } from 'vscode';
 import { Namespace, ParseError, IParsedToken, Scopeable, ContextRole, ElementType, Member, PropertyScope, Type, ParameterScope, TypeKind, MemberKind, Parameter } from './Model';
 import { Stack } from './Stack';
 import { TokenType } from './TokenType';
@@ -14,6 +15,7 @@ export class ParserBase {
 
 export class MidlParser extends ParserBase {
 
+  public uri?: Uri;
   private isEol(idx: number) {
     if (this.text.substr(idx, 2) === '\r\n') return 2;
     else if (this.text[idx] === '\r' || this.text[idx] === '\n') return 1;
@@ -29,15 +31,18 @@ export class MidlParser extends ParserBase {
     { key: /^(get|set)\b/, value: TokenType.method },
     { key: /^import\b/, value: TokenType.import },
     { key: /^\[.*\]/, value: TokenType.attribute },
-    { key: /^(namespace|runtimeclass|struct|interface|enum|delegate|event|get|set)\b/, value: TokenType.keyword },
+    { key: /^(namespace|runtimeclass|struct|interface|enum|delegate|apicontract|event|get|set)\b/, value: TokenType.keyword },
+    { key: /^(static|partial|unsealed)\b/, value: TokenType.modifier },
     { key: /^[\(\)\{\}]/, value: TokenType.scopeToken },
     { key: /^;/, value: TokenType.semicolon },
     { key: /^:/, value: TokenType.colon },
+    { key: /^requires\b/, value: TokenType.requires },
     { key: /^,/, value: TokenType.comma },
     { key: /^(Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Char|String|Single|Double|Boolean|Guid|void)\b/, value: TokenType.type, modifier: 'defaultLibrary' },
     { key: /^=/, value: TokenType.operator },
     { key: /^\d+/, value: TokenType.number },
     { key: /^([\w\d_]+\.)*[\w\d_]+/, value: TokenType.identifier },
+    { key: /^<([\w\d_]+\.)*[\w\d_]+(,([\w\d_]+\.)*[\w\d_]+)*>/, value:TokenType.templateArgs },
   ];
 
   private static GetTokenTypeForMember(memberKind: string) {
