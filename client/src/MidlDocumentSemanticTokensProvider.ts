@@ -40,10 +40,22 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
   private _parseText(text: string): IParsedToken[] {
     const parser = new MidlParser(text);
 
-    console.log(JSON.stringify(parser.parsedModel, null, 2));
-    console.log();
+    // console.log(JSON.stringify(parser.parsedModel, null, 2));
+    // console.log();
+    console.log('Errors:');
     console.log(parser.errors);
 
+    if (parser.parsedTokens.length === 0) {
+      // give something back
+      return [{
+        length: 0,
+        startCharacter: 0,
+        startIndex: 0,
+        line: 0,
+        tokenModifiers: [],
+        tokenType: undefined
+      }];
+    }
     return parser.parsedTokens;
   }
   

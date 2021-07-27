@@ -1,8 +1,8 @@
 {
 	"name": "midl3-language-server",
-  "displayName": "MIDL 3.0 language support",
+	"displayName": "MIDL 3.0 language support",
 	"description": "Language server for MIDL 3.0",
-  "icon": "images/midl3.png",
+	"icon": "images/midl3.png",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
 	"version": "0.0.1",
@@ -33,7 +33,8 @@
 					"MIDL",
 					"MIDL3",
 					"MIDLRT"
-				]
+				],
+        "configuration": "./language-configuration.json"
 			}
 		],
 		"grammars": [
@@ -78,8 +79,8 @@
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
 		"test": "pwsh ./scripts/e2e.ps1",
-    "test:parser": "npx mocha client/out/test/parser.test.js",
-    "package": "vsce package"
+		"test:parser": "npx mocha client/out/test/parser.test.js",
+		"package": "vsce package"
 	},
 	"devDependencies": {
 		"@types/mocha": "^8.0.3",

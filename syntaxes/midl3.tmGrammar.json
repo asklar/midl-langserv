@@ -4,6 +4,7 @@
 		{ "include": "#import" },
 		{ "include": "#preprocessor" },
 		{ "include": "#comment" },
+    { "include": "#namespace" },
 		{ "include": "#type" },
 		{ "include": "#identifier" },
 		{ "include": "#propertyAccessor" },
@@ -17,7 +18,7 @@
 		},
 		"preprocessor": {
 			"name": "keyword.other",
-			"match": "#(include|define|ifdef|if|else|endif|pragma)"
+			"match": "#(include|define|ifdef|ifndef|if|else|endif|pragma)"
 		},
 		"comment": {
 			"patterns": [
@@ -38,6 +39,10 @@
 			"name": "storage.type",
 			"match": "\\b(namespace|runtimeclass|interface|enum|struct|delegate|event)\\b"
 		},
+    "namespace": {
+      "name": "storage.type",
+      "match": "\\bnamespace\\b"
+    },
 		"builtinTypes": {
 			"name": "support.type",
 			"match": "\\b(Int16|Int32|Int64|UInt8|UInt16|UInt32|UInt64|Char|String|Single|Double|Boolean|Guid|void)\\b"

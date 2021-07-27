@@ -128,18 +128,16 @@ suite('Parser tests', () => {
   }),
   test('error 1', async () => {
     await testParser('{', {
-      errors: [],
+      errors: [
+        {
+          col: 1,
+          line: 0,
+          msg: "Unexpected tokens: {",
+          token: '{'
+        }
+      ],
       parsedModel: [],
-      parsedTokens: [{
-        context: undefined,
-        roleInContext: undefined,
-        line: 0,
-        startCharacter: 0,
-        startIndex: 0,
-        length: 1,
-        tokenModifiers: [],
-        tokenType: TokenType.scopeToken,
-      }],
+      parsedTokens: [],
     });
   })
 

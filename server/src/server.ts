@@ -235,6 +235,7 @@ connection.onCompletion(
 			'out',
 			'ref',
 			'ref const',
+      'namespace'
 		];
 
 		const attrs = [
