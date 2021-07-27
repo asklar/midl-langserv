@@ -10,8 +10,8 @@ import { getDocUri, activate } from './helper';
 suite('Should do completion', () => {
 	const docUri = getDocUri('completion.idl');
 
-	test('Completes JS/TS in txt file', async () => {
-		await testCompletion(docUri, new vscode.Position(0, 0), {
+	test('Completes inte in IDL file', async () => {
+		await testCompletion(docUri, new vscode.Position(0, 5), {
 			items: [
 				{ label: 'interface', kind: vscode.CompletionItemKind.Keyword },
         { label: 'interface_name', kind: vscode.CompletionItemKind.Keyword },

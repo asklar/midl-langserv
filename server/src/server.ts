@@ -200,6 +200,8 @@ connection.onCompletion(
 		// which code complete got requested. For the example we ignore this
 		// info and always provide the same completion items.
 
+    connection.console.log(`MIDL LS - COMPLETION - pos: ${_textDocumentPosition.position.line}, ${_textDocumentPosition.position.character}`);
+
 		const types = [
 			'Int16',
 			'Int32',
