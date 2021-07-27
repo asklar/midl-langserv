@@ -186,7 +186,9 @@ export class MidlParser extends ParserBase {
                             (this.parsedTokens.length > 0 ? last(this.parsedTokens) : null);
         const prevContent = prevToken ? text.substr(prevToken.startIndex, prevToken.length) : null;
 
-        if (currentContent === '{') {
+        if (tokenType === TokenType.comment || tokenType === TokenType.preProcessor) {
+          commitCurrentToken = true; // comments are always safe to commit
+        } else if (currentContent === '{') {
           // new scope is started, maybe we need to correct the properties on the new scope
           if (this.currentScope.size() > 0 &&
             this.currentScope.peek() instanceof Member) {
@@ -493,6 +495,10 @@ export class MidlParser extends ParserBase {
       this.AddError(`Unexpected end of file. Top of the scope stack: ${this.currentScope.peek().type}`, '');
     }
 
+    if (this.uncommitted.length > 0) {
+      const throwAway = this.throwAwayTokens();
+      this.AddError(`Unexpected tokens: ${throwAway}`, throwAway);
+    }
     this.RemapIdentifiers();
   }
 
@@ -534,6 +540,7 @@ export class MidlParser extends ParserBase {
     let throwAway = this.uncommitted.map(u => this.text.substr(u.startIndex, u.length)).join(' ');
     console.log(`Throwing away ${this.uncommitted.length} tokens: ${throwAway}`);
     this.uncommitted = [];
+    return throwAway;
   }
 
   private RemapIdentifiers() {
