@@ -1,5 +1,6 @@
 
 
+
 export enum TokenType {
   comment, string, keyword, number, regexp, operator, namespace,
   type, struct, class, interface, enum, typeParameter, function,
@@ -11,5 +12,6 @@ export enum TokenType {
   semicolon,
   colon,
   comma,
-  enumMember
+  enumMember,
+  import
 }
