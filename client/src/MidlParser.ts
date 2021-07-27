@@ -136,7 +136,7 @@ export class MidlParser extends ParserBase {
         return {m, t};
       }
     }
-    return null;
+    return {m: null, t: null};
   }
 
   private currentScope = new Stack<Scopeable>();
@@ -175,6 +175,7 @@ export class MidlParser extends ParserBase {
 
       const {m, t} = this.lex();
       if (m !== null) {
+        let commitCurrentToken = false;
         let roleInContext: ContextRole = undefined;
         const len = m[0].length;
         const currentContent = text.substr(this.currentIdx, len);
@@ -194,9 +195,15 @@ export class MidlParser extends ParserBase {
             const property = new PropertyScope();
             member.accessors = [];
             this.EnterNewScope(property);
+            commitCurrentToken = true;
+          } else {
+            if (this.uncommitted.length > 0) {
+              this.throwAwayTokens();
+            }
           }
         } else if (currentContent === '}') {
           const last = this.ExitScope();
+          commitCurrentToken = true;
           if (this.currentScope.size() !== 0 && this.currentScope.peek() instanceof Type) {
             const type = this.currentScope.peek() as Type;
             if (type.kind === 'enum') {
@@ -245,6 +252,7 @@ export class MidlParser extends ParserBase {
 
                 _type.members.push(invoke);
                 this.EnterNewScope(invokeParams);
+                commitCurrentToken = true;
               }
             } else if (this.currentScope.peek() instanceof Member) {
               const member = this.currentScope.peek() as Member;
@@ -258,12 +266,14 @@ export class MidlParser extends ParserBase {
                 const paramScope = new ParameterScope();
                 member.paramScope = paramScope;
                 this.EnterNewScope(paramScope);
+                commitCurrentToken = true;
               }
             } else {
               this.AddError('Cannot begin method or delegate declaration because current scope is not a Type');
             }
           }
         } else if (currentContent === ')') {
+          commitCurrentToken = true;
           this.ExitScope();
         } else if (currentContent === ',') {
           if (this.currentScope.peek() instanceof Member &&
@@ -271,6 +281,7 @@ export class MidlParser extends ParserBase {
             (this.currentScope.peek(-1) as Type).kind === 'enum'
           ) {
             this.ExitScope();
+            commitCurrentToken = true;
           }
         }
 
@@ -281,6 +292,7 @@ export class MidlParser extends ParserBase {
               id: currentContent,
             });
             this.EnterNewScope(ns);
+            commitCurrentToken = true;
             this.parsedModel.push(ns);
           } else {
             this.AddError(`Namespaces can only appear at the top level or inside namespaces, current scope is ${this.currentScope.peek().type}`);
@@ -303,10 +315,16 @@ export class MidlParser extends ParserBase {
                       });
                       ns.types.push(_type);
                       this.EnterNewScope(_type);
+                      commitCurrentToken = true;
+                      break;
                     }
+                    default:
+                      this.AddError(`Unexpected token ${currentContent} in namespace declaration`);
                       break;
                   }
                 }
+              } else if (t.value === TokenType.keyword && prevToken.tokenType !== TokenType.scopeToken && prevToken.tokenType !== TokenType.semicolon) {
+                this.AddError(`Unexpected token ${prevContent} before keyword ${currentContent}`);
               }
               break;
             }
@@ -347,9 +365,11 @@ export class MidlParser extends ParserBase {
                 });
                 _type.members.push(member);
                 this.EnterNewScope(member);
+                commitCurrentToken = true;
               } else if (tokenType === TokenType.semicolon && _type.kind === 'delegate') {
                 // delegates like `delegate D(X x);`
                 this.ExitScope();
+                commitCurrentToken = true;
               }
               break;
             }
@@ -369,6 +389,7 @@ export class MidlParser extends ParserBase {
               } else if (tokenType === TokenType.semicolon) {
                 if (member.kind !== 'property') {
                   this.ExitScope();
+                  commitCurrentToken = true;
                 } else {
                   this.AddError(`Semicolon found after ${member.kind} ${member.displayName}`);
                 }
@@ -447,7 +468,12 @@ export class MidlParser extends ParserBase {
           context: context,
           roleInContext: roleInContext,
         };
-        this.uncommitted.push(newParsedToken);
+
+        if (commitCurrentToken) {
+          this.parsedTokens.push(newParsedToken);
+        } else {
+          this.uncommitted.push(newParsedToken);
+        }
         this.currentIdx += len;
 
         if (m[0].match(/(\r\n|\r|\n)/)) {
@@ -456,6 +482,8 @@ export class MidlParser extends ParserBase {
         } else {
           this.col += len;
         }
+      } else {
+        this.AddError(`Unrecognized token near ${this.text.substr(this.currentIdx)}`);
       }
 
     }
@@ -471,16 +499,16 @@ export class MidlParser extends ParserBase {
 
   private EnterNewScope(scope: Scopeable) {
     this.currentScope.push(scope);
-    this.flushUncommitted();
+    this.flushUncommittedTokens();
   }
 
-  private flushUncommitted() {
+  private flushUncommittedTokens() {
     this.parsedTokens.push(...this.uncommitted);
     this.uncommitted = [];
   }
 
   private ExitScope() {
-    this.flushUncommitted();
+    this.flushUncommittedTokens();
     return this.currentScope.pop();
   }
 
@@ -491,7 +519,21 @@ export class MidlParser extends ParserBase {
       token: token ?? this.text[this.currentIdx],
       msg: msg,
     });
-    return this.findSyncToken();
+
+    const before = this.currentIdx;
+    const foundSyncToken = this.findSyncToken();
+    if (foundSyncToken) {
+      const after = this.currentIdx;
+      console.log(`Dismissing due to error: ${this.text.substring(before, after)}`);
+      this.throwAwayTokens();
+    }
+    return foundSyncToken;
+  }
+
+  private throwAwayTokens() {
+    let throwAway = this.uncommitted.map(u => this.text.substr(u.startIndex, u.length)).join(' ');
+    console.log(`Throwing away ${this.uncommitted.length} tokens: ${throwAway}`);
+    this.uncommitted = [];
   }
 
   private RemapIdentifiers() {

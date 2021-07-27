@@ -33,7 +33,8 @@
 					"MIDL",
 					"MIDL3",
 					"MIDLRT"
-				]
+				],
+        "configuration": "./language-configuration.json"
 			}
 		],
 		"grammars": [
