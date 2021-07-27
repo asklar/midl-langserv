@@ -62,7 +62,7 @@ export class Member extends Element {
   }
 };
 
-export type TypeKind = 'runtimeclass' | 'interface' | 'enum' | 'delegate' | 'struct' | undefined;
+export type TypeKind = 'runtimeclass' | 'interface' | 'enum' | 'delegate' | 'struct' | 'attribute' | undefined;
 export class Type extends Element {
   id: string;
   kind: TypeKind;

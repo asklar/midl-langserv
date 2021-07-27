@@ -28,7 +28,7 @@ export class MidlParser extends ParserBase {
     { key: /^(get|set)\b/, value: TokenType.method },
     { key: /^import\b/, value: TokenType.keyword},
     { key: /^\[.*\]/, value: TokenType.attribute },
-    { key: /^(namespace|runtimeclass|struct|interface|enum|delegate|event|get|set)\b/, value: TokenType.keyword },
+    { key: /^(namespace|runtimeclass|struct|interface|attribute|enum|delegate|event|get|set)\b/, value: TokenType.keyword },
     { key: /^[\(\)\{\}]/, value: TokenType.scopeToken },
     { key: /^;/, value: TokenType.semicolon },
     { key: /^:/, value: TokenType.colon },
@@ -58,6 +58,7 @@ export class MidlParser extends ParserBase {
       case 'interface':
       case 'enum':
       case 'struct':
+      case 'attribute':
       return TokenType[kindName];
     }
     return TokenType[kindName];
@@ -246,8 +247,7 @@ export class MidlParser extends ParserBase {
                 
                 case 'Type': {
                   const _type = currentScope.peek() as Type;
-                  if (_type.kind !== 'enum' &&
-                  _type.kind !== 'struct' &&
+                  if (this.typeCanExtend(_type) &&
                   (prevToken.tokenType === TokenType.colon || prevToken.tokenType === TokenType.comma)) {
                     if (prevToken.tokenType === TokenType.colon && _type.extends.length !== 0) {
                       this.AddError(`Extending type ${_type.id} - found a colon when we already found one`);
@@ -403,6 +403,10 @@ export class MidlParser extends ParserBase {
     }
     
     
+  private typeCanExtend(_type: Type) {
+    return _type.kind == 'runtimeclass' || _type.kind == 'interface';
+  }
+
     private AddError(msg: string, token?: string) {
       this.errors.push({
         line: this.line,
