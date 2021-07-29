@@ -320,6 +320,9 @@ export class MidlParser extends ParserBase {
                       commitCurrentToken = true;
                       break;
                     }
+                    case TokenType.attribute: {
+                      break;
+                    }
                     default:
                       this.AddError(`Unexpected token ${currentContent} in namespace declaration`);
                       break;
