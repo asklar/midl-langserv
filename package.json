@@ -34,7 +34,7 @@
 					"MIDL3",
 					"MIDLRT"
 				],
-        "configuration": "./language-configuration.json"
+				"configuration": "./language-configuration.json"
 			}
 		],
 		"grammars": [
