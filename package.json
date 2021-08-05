@@ -5,7 +5,7 @@
 	"icon": "images/midl3.png",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/asklar/midl_langserv"
@@ -90,5 +90,8 @@
 		"mocha": "^8.1.1",
 		"typescript": "^4.2.2",
 		"vsce": "^1.96.1"
+	},
+	"dependencies": {
+		"applicationinsights": "^2.1.4"
 	}
 }
