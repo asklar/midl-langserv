@@ -153,7 +153,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let problems = 0;
 	let text = textDocument.getText();
 
-  const classicTypes = new RegExp(`\\b${Object.keys(classicToMidl3Map).join('|')}\\b`, 'g');
+  const classicTypes = new RegExp(`\\b(${Object.keys(classicToMidl3Map).join('|')})\\b`, 'g');
 	let diagnostics: Diagnostic[] = [];
 	while ((m = classicTypes.exec(text)) && problems < settings.maxNumberOfProblems) {
 		problems++;
