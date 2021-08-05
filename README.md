@@ -19,6 +19,8 @@ Provides syntax highlighting, autocomplete, and diagnostics for [MIDL 3](https:/
 - [ ] Unit tests for the parser
 - [ ] e2e tests for autocompletion, diagnostics
 
+
+This extension collects basic usage telemetry (e.g. which version is being used).
 ## Feedback / bug reports
 
 https://github.com/asklar/midl_langserv
