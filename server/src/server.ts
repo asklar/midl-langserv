@@ -134,6 +134,17 @@ documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
+const classicToMidl3Map: Record<string, string> = {
+  int: 'Int32',
+  short: 'Int16',
+  long: 'Int32',
+  PWSTR: 'String',
+  PCWSTR: 'String',
+  double: 'Double',
+  float: 'Float',
+  string: 'String',
+};
+
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// In this simple example we get the settings for every validate run.
 	let settings = await getDocumentSettings(textDocument.uri);
@@ -142,17 +153,19 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let problems = 0;
 	let text = textDocument.getText();
 
-	const classicTypes = /\b(int|short|long|PWSTR|PCWSTR|double|float)\b/g;
+  const classicTypes = new RegExp(`\\b${Object.keys(classicToMidl3Map).join('|')}\\b`, 'g');
 	let diagnostics: Diagnostic[] = [];
 	while ((m = classicTypes.exec(text)) && problems < settings.maxNumberOfProblems) {
 		problems++;
+    const classicType = m[0];
+    const insteadUse = classicToMidl3Map[classicType];
 		let diagnostic: Diagnostic = {
 			severity: DiagnosticSeverity.Error,
 			range: {
 				start: textDocument.positionAt(m.index),
 				end: textDocument.positionAt(m.index + m[0].length)
 			},
-			message: `${m[0]} is a classic MIDL type, not a MIDL 3 type.`,
+			message: `${classicType} is a classic MIDL type, not a MIDL 3 type. Use ${insteadUse} instead.`,
 			source: 'ex'
 		};
 		if (hasDiagnosticRelatedInformationCapability) {
