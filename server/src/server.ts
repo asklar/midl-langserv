@@ -21,6 +21,11 @@ import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
 
+import * as appInsights from 'applicationinsights';
+appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
+
+const packageJson = require('../../package.json');
+
 // Create a connection for the server, using Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 let connection = createConnection(ProposedFeatures.all);
@@ -299,3 +304,10 @@ documents.listen(connection);
 
 // Listen on the connection
 connection.listen();
+
+appInsights.defaultClient.trackEvent({
+  name: 'ServerStarted',
+  properties: {
+    version: packageJson.version,
+  },
+});

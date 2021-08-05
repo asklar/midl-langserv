@@ -15,6 +15,11 @@ import {
 import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokensProvider';
 import { TokenType } from './TokenType';
 
+import * as appInsights from 'applicationinsights';
+appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
+
+const packageJson = require('../../package.json');
+
 let client: LanguageClient;
 
 export const tokenTypes = new Map<TokenType, number>();
@@ -80,11 +85,17 @@ export function activate(context: ExtensionContext) {
 		clientOptions
 	);
 
-  console.log("MIDL3 LS - STARTING");
+  console.log(`MIDL3 LS - STARTING: version = ${packageJson.version}`);
 	context.subscriptions.push(languages.registerDocumentSemanticTokensProvider({ language: 'midl3'}, 
 		new MidlDocumentSemanticTokensProvider(), legend()));
 	// Start the client. This will also launch the server
 	client.start();
+  appInsights.defaultClient.trackEvent({
+    name: 'StartClient',
+    properties: {
+      version: packageJson.version,
+    },
+  });
 }
 
 export function deactivate(): Thenable<void> | undefined {
