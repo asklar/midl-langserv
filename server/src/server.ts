@@ -306,7 +306,7 @@ documents.listen(connection);
 connection.listen();
 
 appInsights.defaultClient.trackEvent({
-  name: 'ServerStarted',
+  name: 'StartServer',
   properties: {
     version: packageJson.version,
   },
