@@ -11,9 +11,16 @@
 		"url": "https://github.com/asklar/midl_langserv"
 	},
 	"publisher": "AlexanderSklarMSFT",
-	"categories": [],
+	"categories": ["Programming Languages"],
 	"keywords": [
-		"multi-root ready"
+		"multi-root ready",
+		"UWP",
+		"WinRT",
+		"C++/WinRT",
+		"cppwinrt",
+		"Windows",
+		"Windows Runtime",
+		"Microsoft"
 	],
 	"engines": {
 		"vscode": "^1.43.0"
