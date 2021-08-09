@@ -5,15 +5,24 @@
 	"icon": "images/midl3.png",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/asklar/midl_langserv"
 	},
 	"publisher": "AlexanderSklarMSFT",
-	"categories": [],
+	"categories": [
+		"Programming Languages"
+	],
 	"keywords": [
-		"multi-root ready"
+		"multi-root ready",
+		"UWP",
+		"WinRT",
+		"C++/WinRT",
+		"cppwinrt",
+		"Windows",
+		"Windows Runtime",
+		"Microsoft"
 	],
 	"engines": {
 		"vscode": "^1.43.0"
