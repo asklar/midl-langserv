@@ -4,6 +4,15 @@ import { IParsedToken } from "./Model";
 import { tokenTypes, tokenModifiers } from './extension';
 import { TokenType } from "./TokenType";
 
+import * as fs from 'fs';
+import * as path from 'path';
+import * as pegjs from 'pegjs';
+
+const cwd = __dirname;
+const grammarFile = fs.readFileSync(path.join(__dirname, 'midl.pegjs')).toString();
+
+const grammar = pegjs.generate(grammarFile);
+
 export class MidlDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider {
   async provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): Promise<SemanticTokens> {
     const allTokens = this._parseText(document.getText());
@@ -38,6 +47,15 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
   
   
   private _parseText(text: string): IParsedToken[] {
+    try {
+      const parsed = grammar.parse(text).filter(x => x !== undefined);
+      return parsed;
+    } catch (e) {
+      console.log(JSON.stringify(e));
+    }
+  }
+
+  private _parseTextOld(text: string): IParsedToken[] {
     const parser = new MidlParser(text);
 
     // console.log(JSON.stringify(parser.parsedModel, null, 2));

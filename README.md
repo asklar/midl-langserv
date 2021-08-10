@@ -6,7 +6,7 @@ Provides syntax highlighting, autocomplete, and diagnostics for [MIDL 3](https:/
 
 ## Functionality
 
-- [X] Syntax highlighting
+- [x] Syntax highlighting
 - [x] Basic semantic parsing
 - [x] Prototype squigglies and auto-completions
 - [ ] Better at recovery from a parse error, better at identifying non-compiling code (error handling).
