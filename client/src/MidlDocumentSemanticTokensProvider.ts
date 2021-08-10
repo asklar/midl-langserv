@@ -1,25 +1,14 @@
 import { CancellationToken, DocumentSemanticTokensProvider, SemanticTokens, SemanticTokensBuilder, TextDocument } from 'vscode';
-//import { MidlParser } from './MidlParser';
 import { IParsedToken } from "./Model";
-import { tokenTypes, tokenModifiers } from './extension';
-import { TokenTypes, TokenType_old } from "./TokenType";
+import { tokenModifiers } from './extension';
+import { TokenTypes } from "./TokenType";
 
-import * as fs from 'fs';
-import * as path from 'path';
-import * as pegjs from 'pegjs';
-
-const cwd = __dirname;
-const grammarFilePath = fs.realpathSync(path.join(__dirname, 'midl.pegjs'));
-const grammarFile = fs.readFileSync(grammarFilePath).toString();
-
-
-let tokens: IParsedToken[] = [];
-
-const grammar = pegjs.generate(grammarFile);
+import { DocumentUri, LanguageClient } from 'vscode-languageclient/node';
 
 export class MidlDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider {
+  constructor(readonly client: LanguageClient) {}
   async provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): Promise<SemanticTokens> {
-    const allTokens = this._parseText(document.getText());
+    const allTokens = await this._parseText(document.uri.path, document.getText());
     const builder = new SemanticTokensBuilder();
     allTokens.forEach((token) => {
       builder.push(token.line, token.startCharacter, token.length, this._encodeTokenType(token.tokenType), this._encodeTokenModifiers(token.tokenModifiers));
@@ -50,39 +39,13 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
   }
   
 
-  private _parseText(text: string): IParsedToken[] {
+  private async _parseText(uri: DocumentUri, text: string): Promise<IParsedToken[]> {
     try {
-      const parsed = grammar.parse(text, {tokenList: tokens}).filter(x => x !== undefined);
-      const t = tokens;
-      tokens = [];
-      console.log(JSON.stringify(t, null, 2));
-      return t;
+      const result = await this.client.sendRequest<IParsedToken[]>('parse', {uri: uri, text: text});
+      return result;
     } catch (e) {
       console.log(JSON.stringify(e));
     }
   }
-
-  // private _parseTextOld(text: string): IParsedToken[] {
-  //   const parser = new MidlParser(text);
-
-  //   // console.log(JSON.stringify(parser.parsedModel, null, 2));
-  //   // console.log();
-  //   console.log('Errors:');
-  //   console.log(parser.errors);
-
-  //   if (parser.parsedTokens.length === 0) {
-  //     // give something back
-  //     return [{
-  //       length: 0,
-  //       startCharacter: 0,
-  //       startIndex: 0,
-  //       line: 0,
-  //       tokenModifiers: [],
-  //       tokenType: undefined
-  //     }];
-  //   }
-  //   return parser.parsedTokens;
-  // }
-  
   
 }

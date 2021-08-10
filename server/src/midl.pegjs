@@ -120,7 +120,7 @@ interfaceName = identifier { emit('interface'); }
 ifaceMember = _ (methodDecl / property / event)
 delegateDecl "delegate" = _ delegateKW _ methodSig _ ";"
 delegateKW = "delegate" { emit('keyword'); }
-methodDecl = _ attrHeader _ overridableKW? _ protectedKW? _ staticKW? _ methodSig _ ";"
+methodDecl "method declaration" = _ attrHeader _ overridableKW? _ protectedKW? _ staticKW? _ methodSig _ ";"
 overridableKW = "overridable" { emit('keyword'); }
 protectedKW = "protected" { emit('keyword'); }
 

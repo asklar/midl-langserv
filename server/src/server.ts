@@ -15,11 +15,18 @@ import {
 	TextDocumentPositionParams,
 	TextDocumentSyncKind,
 	InitializeResult,
+  DocumentUri,
 } from 'vscode-languageserver/node';
 
 import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
+
+import * as fs from 'fs';
+import * as path from 'path';
+import { IParsedToken } from './Model';
+
+import * as pegjs from 'pegjs';
 
 import * as appInsights from 'applicationinsights';
 appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
@@ -83,7 +90,54 @@ connection.onInitialized(() => {
 			connection.console.log('Workspace folder change event received.');
 		});
 	}
+
+  connection.onRequest('parse', (params: {uri: DocumentUri, text: string }) => {
+    return parseText(params.uri, params.text);
+  })
 });
+
+const cwd = __dirname;
+const grammarFilePath = fs.realpathSync(path.join(__dirname, 'midl.pegjs'));
+const grammarFile = fs.readFileSync(grammarFilePath).toString();
+
+let tokens: IParsedToken[] = [];
+
+const grammar = pegjs.generate(grammarFile);
+
+
+
+function parseText(uri: DocumentUri, text: string) {
+  try {
+    const parsed = (grammar.parse(text, {tokenList: tokens}) as any[]).filter(x => x !== undefined);
+    const t = tokens;
+    console.log(JSON.stringify(t, null, 2));
+    return t;
+  } catch (_e) {
+    console.log('Error from LSP Server:');
+    const e = _e as pegjs.PEG.SyntaxError;
+    console.log(JSON.stringify(e, null, 2));
+    connection.sendDiagnostics({uri:  uri, diagnostics: [
+      {
+        message: e.message,
+        severity: DiagnosticSeverity.Error,
+        source: 'MIDL 3',
+        range: {
+          start: {
+            line: e.location.start.line - 1,
+            character: e.location.start.column - 1,
+          },
+          end: {
+            line: e.location.end.line - 1,
+            character: e.location.end.column - 1,
+          },
+        }
+      }
+    ]});
+    return [];
+  } finally {
+    tokens = [];
+  }
+}
 
 // The example settings
 interface MidlLSSettings {
@@ -311,3 +365,4 @@ appInsights.defaultClient.trackEvent({
     version: packageJson.version,
   },
 });
+

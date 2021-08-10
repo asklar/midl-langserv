@@ -13,7 +13,7 @@ import {
 	TransportKind
 } from 'vscode-languageclient/node';
 import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokensProvider';
-import { TokenType, TokenTypes } from './TokenType';
+import { TokenTypes } from './TokenType';
 
 import * as appInsights from 'applicationinsights';
 appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
@@ -22,12 +22,7 @@ const packageJson = require('../../package.json');
 
 let client: LanguageClient;
 
-export const tokenTypes = new Map<string, number>();
 export const tokenModifiers = new Map<string, number>();
-
-function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
-    return Object.keys(obj).filter(k => Number.isNaN(+k)) as K[];
-}
 
 function legend() {
 
@@ -83,7 +78,7 @@ export function activate(context: ExtensionContext) {
 
   console.log(`MIDL3 LS - STARTING: version = ${packageJson.version}`);
 	context.subscriptions.push(languages.registerDocumentSemanticTokensProvider({ language: 'midl3'}, 
-		new MidlDocumentSemanticTokensProvider(), legend()));
+		new MidlDocumentSemanticTokensProvider(client), legend()));
 	// Start the client. This will also launch the server
 	client.start();
   appInsights.defaultClient.trackEvent({
