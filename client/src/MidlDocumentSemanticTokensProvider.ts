@@ -1,26 +1,28 @@
 import { CancellationToken, DocumentSemanticTokensProvider, SemanticTokens, SemanticTokensBuilder, TextDocument } from 'vscode';
-import { MidlParser } from './MidlParser';
 import { IParsedToken } from "./Model";
-import { tokenTypes, tokenModifiers } from './extension';
-import { TokenType } from "./TokenType";
+import { tokenModifiers } from './extension';
+import { TokenTypes } from "./TokenType";
+
+import { DocumentUri, LanguageClient } from 'vscode-languageclient/node';
 
 export class MidlDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider {
+  constructor(readonly client: LanguageClient) {}
   async provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): Promise<SemanticTokens> {
-    const allTokens = this._parseText(document.getText());
+    const allTokens = await this._parseText(document.uri.path, document.getText());
     const builder = new SemanticTokensBuilder();
     allTokens.forEach((token) => {
       builder.push(token.line, token.startCharacter, token.length, this._encodeTokenType(token.tokenType), this._encodeTokenModifiers(token.tokenModifiers));
     });
+
     return builder.build();
   }
   
-  private _encodeTokenType(tokenType: TokenType): number {
-    if (tokenTypes.has(tokenType)) {
-      return tokenTypes.get(tokenType)!;
-    } else if (tokenType?.toString() === 'notInLegend') {
-      return tokenTypes.size + 2;
+  private _encodeTokenType(tokenType: string): number {
+    const idx = TokenTypes.findIndex(e => e === tokenType);
+    if (idx !== -1) {
+      return idx;
     }
-    return 0;
+    return TokenTypes.length + 2;
   }
   
   private _encodeTokenModifiers(strTokenModifiers: string[]): number {
@@ -36,28 +38,14 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
     return result;
   }
   
-  
-  private _parseText(text: string): IParsedToken[] {
-    const parser = new MidlParser(text);
 
-    // console.log(JSON.stringify(parser.parsedModel, null, 2));
-    // console.log();
-    console.log('Errors:');
-    console.log(parser.errors);
-
-    if (parser.parsedTokens.length === 0) {
-      // give something back
-      return [{
-        length: 0,
-        startCharacter: 0,
-        startIndex: 0,
-        line: 0,
-        tokenModifiers: [],
-        tokenType: undefined
-      }];
+  private async _parseText(uri: DocumentUri, text: string): Promise<IParsedToken[]> {
+    try {
+      const result = await this.client.sendRequest<IParsedToken[]>('parse', {uri: uri, text: text});
+      return result;
+    } catch (e) {
+      console.log(JSON.stringify(e));
     }
-    return parser.parsedTokens;
   }
-  
   
 }
