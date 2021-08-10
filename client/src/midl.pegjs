@@ -4,43 +4,82 @@
 // https://github.com/asklar/midl_langserv
 
 
+{
+  /*
+  export interface IParsedToken {
+    line: number;
+    startCharacter: number;
+    length: number;
+    tokenType: TokenType; //string;
+    tokenModifiers: string[];
+    startIndex: number;
+    context?: Namespace | Type | Member | ParameterScope;
+    roleInContext?: ContextRole;
+  }
+  */
+
+  function emit(tokenType, tokenModifiers) {
+    const l = location();
+    const token = {
+      startIndex: l.start.offset,
+      length: l.end.offset - l.start.offset + 1,
+      tokenType: tokenType,
+      startCharacter: l.start.column - 1,
+      line: l.start.line - 1,
+      tokenModifiers: tokenModifiers !== undefined ? tokenModifiers : [],
+    };
+
+    options.tokenList.push(token);
+    return token;
+  }
+
+}
+
 Program
   = prolog namespace*
   
-prolog = _ ((import / preprocessorStatement / _ ) [\r\n])*
+prolog = _ ((importStatement:import / preprocessorStatement / _ ) [\r\n])*
 
-import = "import" _ stringLiteral _ ";" 
+import = importKeyword _ stringLiteral _ ";" 
+importKeyword = "import" { return emit('import'); }
 
-preprocessorStatement = (
-  ("#import" _ stringLiteral _ ";") /
+
+ preprocessorStatement = (
+  ( "#include" _ stringLiteralOrBetweenGtLt _ ) /
   ( "#ifdef" _ preprocessorExpression ) /
   ( "#ifndef" _ preprocessorExpression ) /
   ( "#if" _ preprocessorExpression) /
-  ( "#endif") /
+  ( "#endif" _) /
   ( "#define" _ identifier preprocessorExpression )
 )
 
+stringLiteralOrBetweenGtLt = stringLiteral / ("<" [^>]+ ">")
+
 preprocessorExpression = [^\r\n]+
 
-namespace = _ attrHeader _ "namespace" _ identifier _ "{" _ member* _ "}"
+namespace = _ attrHeader _ namespaceKeyword _ identifier _ "{" _ member* _ "}"
+namespaceKeyword = "namespace" { emit('namespace'); }
 
 attrHeader = (attribute _?) *
 
-attribute = "[" _ attrname:identifier _ attrCtor? _ "]" { return { attr: attrname }; }
+attribute = "[" _ attrname:identifier _ attrCtor? _ "]" { return emit('attribute'); }
 
 attrCtor = "(" _ methodCallParams? _ ")"
 
 methodCallParams = (methodCallParam _ "," _ methodCallParams) / methodCallParam 
 
-identifier = [A-Za-z_][A-Za-z0-9_]* { return text(); }
+identifier = [A-Za-z_][A-Za-z0-9_]* { return emit('identifier'); }
 
 member = _ attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enumDecl / structDecl)
 
 methodCallParam = stringLiteral / integer / identifier
 
-stringLiteral = '"' [^"]* '"'
+stringLiteral = '"' [^"]* '"' { return emit('string'); }
 
-comment = "//" [^\r\n]* {return ;}
+comment = singleLineComment / multiLineComment
+
+singleLineComment = "//" [^\r\n]* {return emit('comment');}
+multiLineComment = "/*" (!"*/" .)* "*/" {return emit('comment');}
 
 whitespace = [ \t\r\n]
 _ "whitespaceOrComment"

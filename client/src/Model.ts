@@ -5,7 +5,7 @@ export interface IParsedToken {
   line: number;
   startCharacter: number;
   length: number;
-  tokenType: TokenType; //string;
+  tokenType: TokenType;
   tokenModifiers: string[];
   startIndex: number;
   context?: Namespace | Type | Member | ParameterScope;

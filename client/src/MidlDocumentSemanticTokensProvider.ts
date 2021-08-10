@@ -1,15 +1,19 @@
 import { CancellationToken, DocumentSemanticTokensProvider, SemanticTokens, SemanticTokensBuilder, TextDocument } from 'vscode';
-import { MidlParser } from './MidlParser';
+//import { MidlParser } from './MidlParser';
 import { IParsedToken } from "./Model";
 import { tokenTypes, tokenModifiers } from './extension';
-import { TokenType } from "./TokenType";
+import { TokenTypes, TokenType_old } from "./TokenType";
 
 import * as fs from 'fs';
 import * as path from 'path';
 import * as pegjs from 'pegjs';
 
 const cwd = __dirname;
-const grammarFile = fs.readFileSync(path.join(__dirname, 'midl.pegjs')).toString();
+const grammarFilePath = fs.realpathSync(path.join(__dirname, 'midl.pegjs'));
+const grammarFile = fs.readFileSync(grammarFilePath).toString();
+
+
+let tokens: IParsedToken[] = [];
 
 const grammar = pegjs.generate(grammarFile);
 
@@ -20,16 +24,16 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
     allTokens.forEach((token) => {
       builder.push(token.line, token.startCharacter, token.length, this._encodeTokenType(token.tokenType), this._encodeTokenModifiers(token.tokenModifiers));
     });
+
     return builder.build();
   }
   
-  private _encodeTokenType(tokenType: TokenType): number {
-    if (tokenTypes.has(tokenType)) {
-      return tokenTypes.get(tokenType)!;
-    } else if (tokenType?.toString() === 'notInLegend') {
-      return tokenTypes.size + 2;
+  private _encodeTokenType(tokenType: string): number {
+    const idx = TokenTypes.findIndex(e => e === tokenType);
+    if (idx !== -1) {
+      return idx;
     }
-    return 0;
+    return TokenTypes.length + 2;
   }
   
   private _encodeTokenModifiers(strTokenModifiers: string[]): number {
@@ -45,37 +49,40 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
     return result;
   }
   
-  
+
   private _parseText(text: string): IParsedToken[] {
     try {
-      const parsed = grammar.parse(text).filter(x => x !== undefined);
-      return parsed;
+      const parsed = grammar.parse(text, {tokenList: tokens}).filter(x => x !== undefined);
+      const t = tokens;
+      tokens = [];
+      console.log(JSON.stringify(t, null, 2));
+      return t;
     } catch (e) {
       console.log(JSON.stringify(e));
     }
   }
 
-  private _parseTextOld(text: string): IParsedToken[] {
-    const parser = new MidlParser(text);
+  // private _parseTextOld(text: string): IParsedToken[] {
+  //   const parser = new MidlParser(text);
 
-    // console.log(JSON.stringify(parser.parsedModel, null, 2));
-    // console.log();
-    console.log('Errors:');
-    console.log(parser.errors);
+  //   // console.log(JSON.stringify(parser.parsedModel, null, 2));
+  //   // console.log();
+  //   console.log('Errors:');
+  //   console.log(parser.errors);
 
-    if (parser.parsedTokens.length === 0) {
-      // give something back
-      return [{
-        length: 0,
-        startCharacter: 0,
-        startIndex: 0,
-        line: 0,
-        tokenModifiers: [],
-        tokenType: undefined
-      }];
-    }
-    return parser.parsedTokens;
-  }
+  //   if (parser.parsedTokens.length === 0) {
+  //     // give something back
+  //     return [{
+  //       length: 0,
+  //       startCharacter: 0,
+  //       startIndex: 0,
+  //       line: 0,
+  //       tokenModifiers: [],
+  //       tokenType: undefined
+  //     }];
+  //   }
+  //   return parser.parsedTokens;
+  // }
   
   
 }

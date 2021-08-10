@@ -13,7 +13,7 @@ import {
 	TransportKind
 } from 'vscode-languageclient/node';
 import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokensProvider';
-import { TokenType } from './TokenType';
+import { TokenType, TokenTypes } from './TokenType';
 
 import * as appInsights from 'applicationinsights';
 appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
@@ -22,7 +22,7 @@ const packageJson = require('../../package.json');
 
 let client: LanguageClient;
 
-export const tokenTypes = new Map<TokenType, number>();
+export const tokenTypes = new Map<string, number>();
 export const tokenModifiers = new Map<string, number>();
 
 function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
@@ -30,10 +30,6 @@ function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
 }
 
 function legend() {
-	const tokenTypesLegend = enumKeys(TokenType).map(v => v as string);
-	
-	
-	tokenTypesLegend.forEach((tokenType, index) => tokenTypes.set(TokenType[tokenType] , index));
 
 	const tokenModifiersLegend = [
 		'declaration', 'documentation', 'readonly', 'static', 'abstract', 'deprecated',
@@ -41,7 +37,7 @@ function legend() {
 	];
 	tokenModifiersLegend.forEach((tokenModifier, index) => tokenModifiers.set(tokenModifier, index));
 
-	return new SemanticTokensLegend(tokenTypesLegend, tokenModifiersLegend);
+	return new SemanticTokensLegend(TokenTypes, tokenModifiersLegend);
 }
 
 export function activate(context: ExtensionContext) {
