@@ -37,17 +37,17 @@
 
 }
 
-Program
+start
   = prolog namespace*
   
 prolog = (importStatement:import / preprocessorStatement / whitespace / comment )*
 
-import = importKeyword _ importFile _ ";" 
+import "import" = importKeyword _ importFile _ ";" 
 importFile = stringLiteral { return emit('import'); }
 importKeyword = "import" { return emit('keyword'); }
 
 
- preprocessorStatement = (
+ preprocessorStatement "preprocessor statement" = (
   ( includeKW _ includeReference ) /
   ( ifdefKW _ preprocessorExpression ) /
   ( ifndefKW _ preprocessorExpression ) /
@@ -69,11 +69,11 @@ includeReference = (stringLiteral / ("<" [^>]+ ">")) { emit('file'); }
 
 preprocessorExpression = [^\r\n]+
 
-namespace "namespace" = _ attrHeader _ namespaceKW _ namespaceName _ "{" _ member* _ "}"
+namespace = _ attrHeader _ namespaceKW _ namespaceName _ "{" _ member* _ "}"
 namespaceKW = "namespace" { emit('keyword'); }
 namespaceName "namespace name" = identifier { emit('namespace') }
 
-attrHeader = (attribute _?) *
+attrHeader = (attribute _) *
 
 attribute "attribute usage" = "[" _ attrname:identifier _ attrCtor? _ "]" { return emit('attribute'); }
 
@@ -94,7 +94,7 @@ comment "comment" = singleLineComment / multiLineComment
 singleLineComment = "//" [^\r\n]* {return emit('comment');}
 multiLineComment = "/*" (!"*/" .)* "*/" {return emit('comment');}
 
-whitespace = [ \t\r\n]
+whitespace "whitespace" = [ \t\r\n]
 _ "whitespaceOrComment"
   = (whitespace / comment)* {return ;} 
   
