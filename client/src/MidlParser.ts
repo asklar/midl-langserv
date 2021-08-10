@@ -328,7 +328,10 @@ export class MidlParser extends ParserBase {
                       break;
                   }
                 }
-              } else if (t.value === TokenType.keyword && prevToken.tokenType !== TokenType.scopeToken && prevToken.tokenType !== TokenType.semicolon) {
+              } else if (t.value === TokenType.keyword && 
+                (prevToken.tokenType !== TokenType.scopeToken &&
+                  prevToken.tokenType !== TokenType.semicolon &&
+                  prevToken.tokenType !== TokenType.attribute)) {
                 this.AddError(`Unexpected token ${prevContent} before keyword ${currentContent}`);
               }
               break;
