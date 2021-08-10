@@ -11,7 +11,7 @@ export const TokenTypes = [
   'comma',
   'enumMember',
   'import',
-  'file'
+  'file',
 ];
 
 export type TokenType = typeof TokenTypes[number];
