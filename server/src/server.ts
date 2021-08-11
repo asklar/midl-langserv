@@ -92,7 +92,8 @@ connection.onInitialized(() => {
 	}
 
   connection.onRequest('parse', (params: {uri: DocumentUri, text: string }) => {
-    return parseText(params.uri, params.text);
+    const parseResult = parseText(params.uri, params.text);
+    return parseResult.tokens;
   })
 });
 
@@ -106,17 +107,17 @@ const grammar = pegjs.generate(grammarFile);
 
 
 
-function parseText(uri: DocumentUri, text: string) {
+function parseText(uri: DocumentUri, text: string) : { tokens: IParsedToken[], errors: Diagnostic[] } {
   try {
     const parsed = (grammar.parse(text, {tokenList: tokens}) as any[]).filter(x => x !== undefined);
     const t = tokens;
     console.log(JSON.stringify(t, null, 2));
-    return t;
+    return {tokens: t, errors: []};
   } catch (_e) {
     console.log('Error from LSP Server:');
     const e = _e as pegjs.PEG.SyntaxError;
     console.log(JSON.stringify(e, null, 2));
-    connection.sendDiagnostics({uri:  uri, diagnostics: [
+    const errors = [
       {
         message: e.message,
         severity: DiagnosticSeverity.Error,
@@ -132,8 +133,8 @@ function parseText(uri: DocumentUri, text: string) {
           },
         }
       }
-    ]});
-    return [];
+    ];
+    return { tokens: [], errors: errors};
   } finally {
     tokens = [];
   }
@@ -209,40 +210,46 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	let settings = await getDocumentSettings(textDocument.uri);
 	let m: RegExpExecArray | null;
 
-	let problems = 0;
-	let text = textDocument.getText();
-
   const classicTypes = new RegExp(`\\b(${Object.keys(classicToMidl3Map).join('|')})\\b`, 'g');
-	let diagnostics: Diagnostic[] = [];
-	while ((m = classicTypes.exec(text)) && problems < settings.maxNumberOfProblems) {
-		problems++;
-    const classicType = m[0];
-    const insteadUse = classicToMidl3Map[classicType];
-		let diagnostic: Diagnostic = {
-			severity: DiagnosticSeverity.Error,
-			range: {
-				start: textDocument.positionAt(m.index),
-				end: textDocument.positionAt(m.index + m[0].length)
-			},
-			message: `${classicType} is a classic MIDL type, not a MIDL 3 type. Use ${insteadUse} instead.`,
-			source: 'ex'
-		};
-		if (hasDiagnosticRelatedInformationCapability) {
-			diagnostic.relatedInformation = [
-				{
-					location: {
-						uri: textDocument.uri,
-						range: Object.assign({}, diagnostic.range)
-					},
-					message: 'Do not mix MIDL and MIDL 3 syntax'
-				},
-			];
-		}
-		diagnostics.push(diagnostic);
-	}
 
-	// Send the computed diagnostics to VSCode.
-	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+  const parseResult = parseText(textDocument.uri, textDocument.getText());
+
+  let problems = 0;
+  for (const t of parseResult.tokens.filter(x => x.tokenType === 'type')) {
+    const text = t.text;
+    if (text) {
+      while ((m = classicTypes.exec(text)) && problems < settings.maxNumberOfProblems) {
+        problems++;
+        const classicType = m[0];
+        const insteadUse = classicToMidl3Map[classicType];
+        let diagnostic: Diagnostic = {
+          severity: DiagnosticSeverity.Error,
+          range: {
+            start: textDocument.positionAt(t.startIndex),
+            end: textDocument.positionAt(t.startIndex + m[0].length)
+          },
+          message: `${classicType} is a classic MIDL type, not a MIDL 3 type. Use ${insteadUse} instead.`,
+          source: 'ex'
+        };
+        if (hasDiagnosticRelatedInformationCapability) {
+          diagnostic.relatedInformation = [
+            {
+              location: {
+                uri: textDocument.uri,
+                range: Object.assign({}, diagnostic.range)
+              },
+              message: 'Do not mix MIDL and MIDL 3 syntax'
+            },
+          ];
+        }
+        parseResult.errors.push(diagnostic);
+      }
+    }
+  
+  }
+  	// Send the computed diagnostics to VSCode.
+	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: parseResult.errors });
+
 }
 
 connection.onDidChangeWatchedFiles(_change => {

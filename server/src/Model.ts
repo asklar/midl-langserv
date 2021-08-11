@@ -7,4 +7,5 @@ export interface IParsedToken {
   tokenType: TokenType;
   tokenModifiers: string[];
   startIndex: number;
+  text?: string;
 }
