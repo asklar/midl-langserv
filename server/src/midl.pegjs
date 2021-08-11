@@ -70,7 +70,7 @@ includeReference = (stringLiteral / ("<" [^>]+ ">")) { emit('file'); }
 
 preprocessorExpression = [^\r\n]+
 
-namespace = _ attrHeader _ namespaceKW _ namespaceName _ "{" _ member* _ "}"
+namespace = _ attrHeader _ namespaceKW _ namespaceName _ "{" _ member* _ "}" _
 namespaceKW = "namespace" { emit('keyword'); }
 namespaceName "namespace name" = typeName { emit('namespace') }
 
