@@ -84,9 +84,9 @@ methodCallParams = (methodCallParam _ "," _ methodCallParams) / methodCallParam
 
 identifier "identifier" = [A-Za-z_][A-Za-z0-9_]* { return text(); }
 
-member = _ attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enumDecl / structDecl)
+member = _ attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enumDecl / structDecl / apiContract)
 
-methodCallParam "parameter" = stringLiteral / integer / identifier
+methodCallParam "parameter" = stringLiteral / number / identifier
 
 stringLiteral "string" = '"' [^"]* '"' { return emit('string'); }
 
@@ -152,10 +152,12 @@ field "field" = attrHeader _ type _ fieldNameList  _ ";"
 fieldNameList = fieldName (_ "," _ fieldName)*
 fieldName "field name" = identifier { emit('property')}
 
+number = float / integer
 
 integer "integer"
   = hex / decimal { emit('number'); }
-  
+
+float = integer (dot integer)? 
 decimal = (_ "-"? _ [0-9]+ { return parseInt(text(), 10); })
 hex = (_ "0x" [0-9A-Fa-f]+ {return parseInt(text(), 16); })
 
@@ -185,6 +187,9 @@ property "property" = _ attrHeader _ staticKW? _ retType _ propertyName _ openBr
 propertyName "property name" = identifier { emit('property'); }
 accessor "accessor" = ("get" / "set") _ ";" _ { emit('method'); }
 
+apiContract = apiContractKW _ apiContractName _ ((openBrace _ closeBrace _ ";"?) / ";")
+apiContractName = identifier { emit('type'); }
+apiContractKW = "apicontract" { emit('keyword'); }
 
 kw = eventKW ;
 
@@ -194,3 +199,4 @@ openParen = "("  { emit('punctuation'); }
 closeParen = ")" { emit('punctuation'); }
 openBracket = "["  { emit('punctuation'); }
 closeBracket = "]" { emit('punctuation'); }
+dot = "."
