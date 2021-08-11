@@ -72,7 +72,7 @@ preprocessorExpression = [^\r\n]+
 
 namespace = _ attrHeader _ namespaceKW _ namespaceName _ "{" _ member* _ "}"
 namespaceKW = "namespace" { emit('keyword'); }
-namespaceName "namespace name" = identifier { emit('namespace') }
+namespaceName "namespace name" = typeName { emit('namespace') }
 
 attrHeader = (attribute _) *
 
@@ -113,7 +113,7 @@ attributeKW = "attributeKW" { emit('keyword'); }
 attributeName "attribute name" = identifier { emit('attribute')}
 
 /* INTERFACE DECL */
-ifaceDecl = _ "interface" _ interfaceName _ requires? "{" _ ifaceMember* _ "}"
+ifaceDecl = _ "interface" _ interfaceName _ requires? "{" _ ifaceMember* _ "}" ";"?
 interfaceName = identifier { emit('interface'); }
 
 /* METHOD DECL */
@@ -144,12 +144,14 @@ enumValue = enumMemberName _ ("=" _ integer)?
 enumMemberName "enum member name" = identifier { emit('enumMember'); }
 
 /* STRUCT DECL */
-structDecl "struct" = _ structKW _ structName _ "{" _ field* _ "}"
+structDecl "struct" = _ structKW _ structName _ "{" _ field* _ "}" ";"?
 structKW = "struct" { emit('keyword'); }
 structName "struct name" = identifier { emit('struct'); }
 
-field "field" = attrHeader _ type _ fieldName  _ ";" 
+field "field" = attrHeader _ type _ fieldNameList  _ ";" 
+fieldNameList = fieldName (_ "," _ fieldName)*
 fieldName "field name" = identifier { emit('property')}
+
 
 integer "integer"
   = hex / decimal { emit('number'); }

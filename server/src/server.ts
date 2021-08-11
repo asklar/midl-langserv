@@ -200,7 +200,7 @@ const classicToMidl3Map: Record<string, string> = {
   PWSTR: 'String',
   PCWSTR: 'String',
   double: 'Double',
-  float: 'Float',
+  float: 'Single',
   string: 'String',
 };
 

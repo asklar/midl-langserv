@@ -8,6 +8,7 @@ import { DocumentUri, LanguageClient } from 'vscode-languageclient/node';
 export class MidlDocumentSemanticTokensProvider implements DocumentSemanticTokensProvider {
   constructor(readonly client: LanguageClient) {}
   async provideDocumentSemanticTokens(document: TextDocument, token: CancellationToken): Promise<SemanticTokens> {
+
     const allTokens = await this._parseText(document.uri.path, document.getText());
     const builder = new SemanticTokensBuilder();
     allTokens.forEach((token) => {
@@ -41,6 +42,7 @@ export class MidlDocumentSemanticTokensProvider implements DocumentSemanticToken
 
   private async _parseText(uri: DocumentUri, text: string): Promise<IParsedToken[]> {
     try {
+      await this.client.onReady();
       const result = await this.client.sendRequest<IParsedToken[]>('parse', {uri: uri, text: text});
       return result;
     } catch (e) {
