@@ -22,7 +22,7 @@
     const l = location();
     const token = {
       startIndex: l.start.offset,
-      length: l.end.offset - l.start.offset + 1,
+      length: l.end.offset - l.start.offset,
       tokenType: tokenType,
       startCharacter: l.start.column - 1,
       line: l.start.line - 1,
@@ -70,15 +70,15 @@ includeReference = (stringLiteral / ("<" [^>]+ ">")) { emit('file'); }
 
 preprocessorExpression = [^\r\n]+
 
-namespace = _ attrHeader _ namespaceKW _ namespaceName _ "{" _ member* _ "}" _
+namespace = _ attrHeader _ namespaceKW _ namespaceName _ openBrace _ member* _ closeBrace _
 namespaceKW = "namespace" { emit('keyword'); }
 namespaceName "namespace name" = typeName { emit('namespace') }
 
 attrHeader = (attribute _) *
 
-attribute "attribute usage" = "[" _ attrname:identifier _ attrCtor? _ "]" { return emit('attribute'); }
+attribute "attribute usage" = openBracket _ attrname:identifier _ attrCtor? _ closeBracket { return emit('attribute'); }
 
-attrCtor = "(" _ methodCallParams? _ ")"
+attrCtor = openParen _ methodCallParams? _ closeParen
 
 methodCallParams = (methodCallParam _ "," _ methodCallParams) / methodCallParam 
 
@@ -99,7 +99,7 @@ whitespace "whitespace" = [ \t\r\n]
 _ "whitespaceOrComment"
   = (whitespace / comment)* {return ;} 
   
-classDecl = staticKW?  _ unsealedKW? _ runtimeclassKW _ className _ extends? _ "{" _ classMember* _ "}"
+classDecl = staticKW?  _ unsealedKW? _ runtimeclassKW _ className _ extends? _ openBrace _ classMember* _ closeBrace
 staticKW = "static" { emit('keyword'); }
 unsealedKW = "unsealed" { emit('keyword'); }
 runtimeclassKW = "runtimeclass" { emit('keyword'); }
@@ -108,12 +108,12 @@ className "class name" = identifier { emit('class'); }
 extends = ":" _ listOfExtendsTypes
 
 /* ATTRIBUTE DECL */
-attrDecl "attribute" = _ attributeKW _ attributeName _ "{" _ fieldOrCtor* _ "}" _ ";"?
+attrDecl "attribute" = _ attributeKW _ attributeName _ openBrace _ fieldOrCtor* _ closeBrace _ ";"?
 attributeKW = "attributeKW" { emit('keyword'); }
 attributeName "attribute name" = identifier { emit('attribute')}
 
 /* INTERFACE DECL */
-ifaceDecl = _ "interface" _ interfaceName _ requires? "{" _ ifaceMember* _ "}" ";"?
+ifaceDecl = _ "interface" _ interfaceName _ requires? openBrace _ ifaceMember* _ closeBrace ";"?
 interfaceName = identifier { emit('interface'); }
 
 /* METHOD DECL */
@@ -124,7 +124,7 @@ methodDecl "method declaration" = _ attrHeader _ overridableKW? _ protectedKW? _
 overridableKW = "overridable" { emit('keyword'); }
 protectedKW = "protected" { emit('keyword'); }
 
-methodSig = retType _ methodName _ "(" _ methodDeclParams? _ ")" _ 
+methodSig = retType _ methodName _ openParen _ methodDeclParams? _ closeParen _ 
 methodName = identifier { emit('method'); }
 methodDeclParams = methodDeclParam (_ "," _ methodDeclParams)*
 methodDeclParam = attrHeader _ type _ parameterName
@@ -136,7 +136,7 @@ eventKW = "event" { emit('keyword'); }
 eventName "event name"= identifier { emit('method'); }
 
 /* ENUM DECL */
-enumDecl = _ enumKW _ enumName _ "{" _ enumValues _ "}" _ ";"?
+enumDecl = _ enumKW _ enumName _ openBrace _ enumValues _ closeBrace _ ";"?
 enumKW = "enum" { emit('keyword'); }
 enumName "enum name" = identifier { emit('enum'); }
 enumValues = (enumValue _ "," _ enumValues) / (enumValue _ ","?)
@@ -144,7 +144,7 @@ enumValue = enumMemberName _ ("=" _ integer)?
 enumMemberName "enum member name" = identifier { emit('enumMember'); }
 
 /* STRUCT DECL */
-structDecl "struct" = _ structKW _ structName _ "{" _ field* _ "}" ";"?
+structDecl "struct" = _ structKW _ structName _ openBrace _ field* _ closeBrace ";"?
 structKW = "struct" { emit('keyword'); }
 structName "struct name" = identifier { emit('struct'); }
 
@@ -161,11 +161,11 @@ hex = (_ "0x" [0-9A-Fa-f]+ {return parseInt(text(), 16); })
 
 classMember = ifaceMember / field / ctor / scopeBlock
 
-scopeBlock = _ attrHeader _ "{" _ classMember* _ "}" 
+scopeBlock = _ attrHeader _ openBrace _ classMember* _ closeBrace 
 
 fieldOrCtor = (field / ctor) _
 
-ctor "constructor" = _ attrHeader _ ctorName _ "(" _ methodDeclParams? _ ")" _ ";"
+ctor "constructor" = _ attrHeader _ ctorName _ openParen _ methodDeclParams? _ closeParen _ ";"
 ctorName "ctor name" = identifier { emit('method'); }
 
 requires = requiresKW _ listOfRequiresTypes
@@ -175,14 +175,22 @@ listOfExtendsTypes "list of `extends` types" = (type _ "," _ listOfExtendsTypes)
 
 retType = type / voidType { emit('type'); }
 voidType = "void" 
-type = typeName _ ("<" _ listOfGenericsTypes _ ">" )? _ "[]"? { emit('type'); }
+type = typeName _ ("<" _ listOfGenericsTypes _ ">" )? _ arraySpec? { emit('type'); }
+arraySpec = openBracket _ closeBracket
 listOfGenericsTypes "list of generic type arguments" = (type _ "," _ listOfGenericsTypes) / type
 
 typeName "type name" = ((!kw) identifier ".")* (!kw) identifier
 
-property "property" = _ attrHeader _ staticKW? _ retType _ propertyName _ "{" _ (accessor+)  "}" _ ";"?
+property "property" = _ attrHeader _ staticKW? _ retType _ propertyName _ openBrace _ (accessor+)  closeBrace _ ";"?
 propertyName "property name" = identifier { emit('property'); }
 accessor "accessor" = ("get" / "set") _ ";" _ { emit('method'); }
 
 
 kw = eventKW ;
+
+openBrace = "{"  { emit('punctuation'); }
+closeBrace = "}" { emit('punctuation'); }
+openParen = "("  { emit('punctuation'); }
+closeParen = ")" { emit('punctuation'); }
+openBracket = "["  { emit('punctuation'); }
+closeBracket = "]" { emit('punctuation'); }
