@@ -37,7 +37,7 @@ jobs:
       - name: get good IDLs for Test
         env:
           ZIP: ${{ secrets.GOOD_IDL_ZIP }} 
-        run: scripts/unpackGoodIDLs.ps1
+        run: $GITHUB_WORKSPACE/scripts/unpackGoodIDLs.ps1
 
       - name: Test parser
         run: npx mocha server/out/test/index.js
