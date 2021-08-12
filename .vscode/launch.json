@@ -33,6 +33,19 @@
 				"${workspaceRoot}/client/testFixture"
 			],
 			"outFiles": ["${workspaceRoot}/client/out/test/**/*.js"]
+		},
+    {
+			"name": "Parser Test",
+			"type": "node",
+			"request": "launch",
+			// "runtimeExecutable": "${execPath}",
+			"args": [
+				// "--extensionDevelopmentPath=${workspaceRoot}",
+				// "--extensionTestsPath=${workspaceRoot}/server/out/test/parser.test",
+				// "${workspaceRoot}/client/testFixture"
+        "${workspaceRoot}/server/out/test/index.js"
+			],
+			"outFiles": ["${workspaceRoot}/server/out/test/**/*.js"]
 		}
 	],
 	"compounds": [
