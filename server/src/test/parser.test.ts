@@ -17,9 +17,9 @@ const grammar = pegjs.generate(grammarFile);
 describe('Parser tests', async () => {
   const goodIdlPath = process.env['GOOD_IDL_PATH']!;
 
-  test('Validate idl path', () => {
+  it('Validate idl path', () => {
     assert(goodIdlPath && goodIdlPath.length > 0, "Must set GOOD_IDL_PATH env var");
-    assert(fs.existsSync(goodIdlPath), `Path ${goodIdlPath} does not exist`);    
+    assert(fs.existsSync(goodIdlPath), `Path ${goodIdlPath} does not exist`);
   });
 
   const goodIdlFileSpec = path.join(goodIdlPath, '*.idl');
@@ -30,9 +30,9 @@ describe('Parser tests', async () => {
     it(testName, async (done) => {
       const contents = fs.readFileSync(idlPath).toString();
       const tokens: IParsedToken[] = [];
-      assert.doesNotThrow(() => grammar.parse(contents, {tokenList: tokens}));
+      assert.doesNotThrow(() => grammar.parse(contents, { tokenList: tokens }));
       assert.notStrictEqual(tokens.length, 0);
       done();
-    }); 
+    });
   });
 });
