@@ -17,9 +17,9 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -34,8 +34,8 @@ jobs:
       - name: Build and package vsix
         run: yarn package
 
-      #- name: Test parser
-      #  run: npx mocha client/out/test/parser.test.js
+      # - name: Test parser
+      #   run: npx mocha server/out/test/index.js
 
       - name: Upload VSIX
         uses: actions/upload-artifact@v2.2.4
@@ -43,3 +43,4 @@ jobs:
           name: VSIX
           path: '*.vsix'
           if-no-files-found: error
+

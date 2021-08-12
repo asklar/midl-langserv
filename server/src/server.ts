@@ -205,16 +205,13 @@ const classicToMidl3Map: Record<string, string> = {
   string: 'String',
 };
 
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
-	// In this simple example we get the settings for every validate run.
-	let settings = await getDocumentSettings(textDocument.uri);
-	let m: RegExpExecArray | null;
-
-  const classicTypes = new RegExp(`\\b(${Object.keys(classicToMidl3Map).join('|')})\\b`, 'g');
-
+export async function parseTextWithDiagnostics(textDocument: TextDocument) {
   const parseResult = parseText(textDocument.uri, textDocument.getText());
-
   let problems = 0;
+	let m: RegExpExecArray | null;
+  const classicTypes = new RegExp(`\\b(${Object.keys(classicToMidl3Map).join('|')})\\b`, 'g');
+  const settings = await getDocumentSettings(textDocument.uri);
+
   for (const t of parseResult.tokens.filter(x => x.tokenType === 'type')) {
     const text = t.text;
     if (text) {
@@ -247,7 +244,14 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
     }
   
   }
-  	// Send the computed diagnostics to VSCode.
+  return parseResult;
+}
+
+async function validateTextDocument(textDocument: TextDocument): Promise<void> {
+	// In this simple example we get the settings for every validate run.
+  const parseResult = await parseTextWithDiagnostics(textDocument);
+
+  // Send the computed diagnostics to VSCode.
 	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics: parseResult.errors });
 
 }

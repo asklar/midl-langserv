@@ -5,7 +5,7 @@
 	"icon": "images/midl3.png",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
-	"version": "0.0.12",
+	"version": "0.0.13",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/asklar/midl_langserv"
@@ -90,7 +90,7 @@
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
 		"test": "pwsh ./scripts/e2e.ps1",
-		"test:parser": "npx mocha client/out/test/parser.test.js",
+		"test:parser": "npx mocha server/out/test/index.js",
 		"package": "vsce package"
 	},
 	"devDependencies": {
