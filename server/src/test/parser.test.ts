@@ -19,6 +19,7 @@ suite('Parser tests', () => {
   let goodIdlPath = 'C:/os/src/shellcommon/UndockedDevKit/idl';
   if (!fs.existsSync(goodIdlPath)) {
     goodIdlPath = process.env['GOOD_IDL_PATH']!;
+    console.log(`Using good idl path ---- ${goodIdlPath}`);
   }
   const goodIdlFileSpec = path.join(goodIdlPath, '*.idl');
 
