@@ -17,9 +17,9 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -36,11 +36,13 @@ jobs:
 
       - name: dir scripts
         run: gci $GITHUB_WORKSPACE/script -recurse
+        shell: pwsh
 
       - name: get good IDLs for Test
         env:
           ZIP: ${{ secrets.GOOD_IDL_ZIP }} 
         run: $GITHUB_WORKSPACE/scripts/unpackGoodIDLs.ps1
+        shell: pwsh
 
       - name: Test parser
         run: npx mocha server/out/test/index.js
