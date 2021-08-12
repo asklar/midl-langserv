@@ -36,7 +36,7 @@ jobs:
 
       - name: get good IDLs for Test
         env:
-          ZIP: ${{ secrets.GOOD_IDL_ZIP }} 
+          GOOD_IDL_ZIP: ${{ secrets.GOOD_IDL_ZIP }} 
         shell: pwsh
         run: ./scripts/unpackGoodIDLs.ps1
         working-directory: .github/workflows 
