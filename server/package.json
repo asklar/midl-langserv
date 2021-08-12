@@ -18,7 +18,6 @@
 	"scripts": {},
 	"devDependencies": {
 		"@types/glob": "^7.1.4",
-		"glob": "^7.1.7",
-		"mocha": "*"
+		"glob": "^7.1.7"
 	}
 }
