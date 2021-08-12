@@ -8,7 +8,7 @@ on:
   push:
     branches: [ main, goodIDLsTest ]
   pull_request:
-    branches: [ main, goodIDLsTest ]
+    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -35,13 +35,13 @@ jobs:
         run: yarn package
 
       - name: dir scripts
-        run: gci $GITHUB_WORKSPACE/script -recurse
+        run: gci ${GITHUB_WORKSPACE}/script -recurse
         shell: pwsh
 
       - name: get good IDLs for Test
         env:
           ZIP: ${{ secrets.GOOD_IDL_ZIP }} 
-        run: $GITHUB_WORKSPACE/scripts/unpackGoodIDLs.ps1
+        run: $env:GITHUB_WORKSPACE/scripts/unpackGoodIDLs.ps1
         shell: pwsh
 
       - name: Test parser
