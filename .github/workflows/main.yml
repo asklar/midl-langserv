@@ -34,14 +34,10 @@ jobs:
       - name: Build and package vsix
         run: yarn package
 
-      - name: dir scripts
-        run: gci ${{ GITHUB_WORKSPACE }}/script -recurse
-        shell: pwsh
-
       - name: get good IDLs for Test
         env:
           ZIP: ${{ secrets.GOOD_IDL_ZIP }} 
-        run: $env:GITHUB_WORKSPACE/scripts/unpackGoodIDLs.ps1
+        run: ./scripts/unpackGoodIDLs.ps1
         shell: pwsh
 
       - name: Test parser
