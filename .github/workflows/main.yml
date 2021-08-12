@@ -34,15 +34,8 @@ jobs:
       - name: Build and package vsix
         run: yarn package
 
-      - name: get good IDLs for Test
-        env:
-          GOOD_IDL_ZIP: ${{ secrets.GOOD_IDL_ZIP }} 
-        shell: pwsh
-        run: ./scripts/unpackGoodIDLs.ps1
-        working-directory: .github/workflows 
-
-      - name: Test parser
-        run: npx mocha server/out/test/index.js
+      # - name: Test parser
+      #   run: npx mocha server/out/test/index.js
 
       - name: Upload VSIX
         uses: actions/upload-artifact@v2.2.4

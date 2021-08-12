@@ -1,4 +1,4 @@
-import { suite, test } from 'mocha';
+import { test } from 'mocha';
 import * as assert from 'assert';
 
 import * as fs from 'fs';
@@ -14,22 +14,25 @@ const grammarFile = fs.readFileSync(grammarFilePath).toString();
 const grammar = pegjs.generate(grammarFile);
 
 
-suite('Parser tests', () => {
+describe('Parser tests', async () => {
+  const goodIdlPath = process.env['GOOD_IDL_PATH']!;
 
-  let goodIdlPath = 'C:/os/src/shellcommon/UndockedDevKit/idl';
-  if (!fs.existsSync(goodIdlPath)) {
-    goodIdlPath = process.env['GOOD_IDL_PATH']!;
-    console.log(`Using good idl path ---- ${goodIdlPath}`);
-  }
+  test('Validate idl path', () => {
+    assert(goodIdlPath && goodIdlPath.length > 0, "Must set GOOD_IDL_PATH env var");
+    assert(fs.existsSync(goodIdlPath), `Path ${goodIdlPath} does not exist`);    
+  });
+
   const goodIdlFileSpec = path.join(goodIdlPath, '*.idl');
 
   new glob.GlobSync(goodIdlFileSpec).found.forEach(idlPath => {
     const testName = path.basename(idlPath);
-    test(testName, () => {
+
+    it(testName, async (done) => {
       const contents = fs.readFileSync(idlPath).toString();
       const tokens: IParsedToken[] = [];
       assert.doesNotThrow(() => grammar.parse(contents, {tokenList: tokens}));
       assert.notStrictEqual(tokens.length, 0);
+      done();
     }); 
   });
 });
