@@ -35,7 +35,7 @@ jobs:
         run: yarn package
 
       - name: dir scripts
-        run: gci ${GITHUB_WORKSPACE}/script -recurse
+        run: gci ${{ GITHUB_WORKSPACE }}/script -recurse
         shell: pwsh
 
       - name: get good IDLs for Test
