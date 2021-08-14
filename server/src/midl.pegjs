@@ -189,7 +189,7 @@ listOfGenericsTypes "list of generic type arguments" = (type _ "," _ listOfGener
 
 typeName "type name" = ((!kw) identifier ".")* (!kw) identifier
 
-property "property" = _ attrHeader _ staticKW? _ retType _ propertyName _ openBrace _ (accessor+)  closeBrace tailTrivia*
+property "property" = _ attrHeader _ overridableKW? _ staticKW? _ retType _ propertyName _ openBrace _ (accessor+)  closeBrace tailTrivia*
 propertyName "property name" = identifier { emit('property'); }
 accessor "accessor" = ("get" / "set") _ ";" _ { emit('method'); }
 
