@@ -1,3 +1,5 @@
+[![CI](https://github.com/asklar/midl_langserv/actions/workflows/main.yml/badge.svg)](https://github.com/asklar/midl_langserv/actions/workflows/main.yml)
+
 # MIDL 3.0 language support
 
 Provides syntax highlighting, autocomplete, and diagnostics for [MIDL 3](https://docs.microsoft.com/uwp/midl-3/intro).
@@ -14,4 +16,4 @@ This extension collects basic usage telemetry (e.g. which version is being used)
 
 ## Feedback / bug reports
 
-https://github.com/asklar/midl_langserv
+https://github.com/asklar/midl-langserv
