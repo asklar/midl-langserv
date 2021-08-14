@@ -30,6 +30,7 @@ import * as pegjs from 'pegjs';
 
 import * as appInsights from 'applicationinsights';
 appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
+appInsights.defaultClient.config.disableAppInsights = process.env['DISABLE_MIDL3_TELEMETRY'] === 'true'
 
 const packageJson = require('../../package.json');
 
