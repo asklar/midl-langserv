@@ -230,7 +230,7 @@ export async function parseTextWithDiagnostics(textDocument: TextDocument) {
   for (const t of parseResult.tokens.filter(x => x.tokenType === 'type')) {
     const text = t.text;
     if (text) {
-      while ((m = classicTypes.exec(text)) && problems < settings.maxNumberOfProblems) {
+      if ((m = classicTypes.exec(text)) && problems < settings.maxNumberOfProblems) {
         problems++;
         const classicType = m[0];
         const insteadUse = classicToMidl3Map[classicType];
@@ -241,7 +241,9 @@ export async function parseTextWithDiagnostics(textDocument: TextDocument) {
             end: textDocument.positionAt(t.startIndex + m[0].length)
           },
           message: `${classicType} is a classic MIDL type, not a MIDL 3 type. Use ${insteadUse} instead.`,
-          source: 'ex'
+          source: 'MIDL3',
+          code: 'ClassicType',
+          data: { classicType: classicType, insteadUse: insteadUse },
         };
         if (hasDiagnosticRelatedInformationCapability) {
           diagnostic.relatedInformation = [
@@ -257,8 +259,12 @@ export async function parseTextWithDiagnostics(textDocument: TextDocument) {
         parseResult.errors.push(diagnostic);
       }
     }
-
   }
+
+  parseResult.errors = parseResult.errors.filter(
+    (e, idx, arr) => arr.findIndex(er => equals(e, er)) === idx
+  );
+
   return parseResult;
 }
 
@@ -295,6 +301,8 @@ function rangeIncludes(bigRange: Range, smallRange: Range) {
   return true;
 }
 connection.onCodeAction(async (params) => {
+  const codeActions: CodeAction[] = [];
+  const change: WorkspaceChange = new WorkspaceChange();
   const document = documents.get(params.textDocument.uri);
   if (document) {
     const parseResult = await parseTextWithDiagnostics(document); ///((document.uri, document.getText());
@@ -307,24 +315,23 @@ connection.onCodeAction(async (params) => {
     }
     );
 
-    const change: WorkspaceChange = new WorkspaceChange();
-    //change.createFile(`${folder}/newFile.bat`, { overwrite: true });
-    const a = change.getTextEditChange(document);
-    //a.insert({ line: 0, character: 0}, 'Code Action', ChangeAnnotation.create('Insert some text', true));
-    //const b = change.getTextEditChange({ uri: `${folder}/newFile.bat`, version: null });
-    //b.insert({ line: 0, character: 0 }, 'The initial content', ChangeAnnotation.create('Add additional content', true));
+    for (const e of errors) {
+      if (e.code === 'ClassicType') {
+        const midl3Type = (e.data as any).insteadUse;
+        const codeAction: CodeAction = {
+          title: `Use MIDL 3 type: ${midl3Type}`,
+          kind: CodeActionKind.QuickFix,
+          data: params.textDocument.uri
+        };
+        const a = change.getTextEditChange(document);
+        a.replace(e.range, midl3Type);
 
-    const codeAction: CodeAction = {
-      title: 'Custom Code Action',
-      kind: CodeActionKind.QuickFix,
-      data: params.textDocument.uri
-    };
-    codeAction.edit = change.edit;
-    return [
-      codeAction
-    ];
+        codeAction.edit = change.edit;
+        codeActions.push(codeAction);
+      }
+    }
   }
-  return [];
+  return codeActions;
 });
 
 const keywords = [
@@ -449,5 +456,15 @@ appInsights.defaultClient.trackEvent({
 
 function getBasicTokenization(text: string): IParsedToken[] {
   return [];
+}
+
+function equals(a: Diagnostic, b: Diagnostic): boolean {
+  return (
+    a.message === b.message &&
+    a.range.start.line === b.range.start.line &&
+    a.range.start.character === b.range.start.character &&
+    a.range.end.line === b.range.end.line &&
+    a.range.end.character === b.range.end.character
+  );
 }
 
