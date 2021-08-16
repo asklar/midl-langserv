@@ -99,7 +99,7 @@ multiLineComment = "/*" (!"*/" .)* "*/" {return emit('comment');}
 
 whitespace "whitespace" = [ \t\r\n]
 _ "whitespaceOrComment"
-  = (whitespace / comment)* {return ;} 
+  = (preprocessorStatement / whitespace / comment)* {return ;} 
   
 classDecl = staticKW?  _ unsealedKW? _ runtimeclassKW _ className _ ((extends? _ openBrace _ classMember* _ closeBrace) / ";")
 staticKW = "static" { emit('keyword'); }
