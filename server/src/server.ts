@@ -149,7 +149,11 @@ function parseText(uri: DocumentUri, text: string): { tokens: IParsedToken[], er
         }
       }
     ];
-    return { tokens: getBasicTokenization(text), errors: errors };
+    const doc = documents.get(uri);
+    if (doc) {
+      tokens = getBasicTokenization(doc);
+    }
+    return { tokens: tokens, errors: errors };
   } finally {
     tokens = [];
   }
@@ -226,6 +230,19 @@ export async function parseTextWithDiagnostics(textDocument: TextDocument) {
   let m: RegExpExecArray | null;
   const classicTypes = new RegExp(`\\b(${Object.keys(classicToMidl3Map).join('|')})\\b`, 'g');
   const settings = await getDocumentSettings(textDocument.uri);
+
+  const docText = textDocument.getText();
+  for (const e of parseResult.errors.filter(e => 
+    e.range.start.line === e.range.end.line && 
+    e.range.start.character === e.range.end.character - 1)) {
+      const startOffset = textDocument.offsetAt(e.range.start);
+      const nextSpace = docText.substr(startOffset).match(/\s/);
+      if (nextSpace !== null) {
+        e.range.end = textDocument.positionAt(startOffset + nextSpace.index!);
+      } else {
+        e.range.end = textDocument.positionAt(docText.length);
+      }
+  }
 
   for (const t of parseResult.tokens.filter(x => x.tokenType === 'type')) {
     const text = t.text;
@@ -454,8 +471,39 @@ appInsights.defaultClient.trackEvent({
   },
 });
 
-function getBasicTokenization(text: string): IParsedToken[] {
-  return [];
+function getBasicTokenization(doc: TextDocument): IParsedToken[] {
+  let i = 0;
+  const text = doc.getText();
+  const keywordsRegEx = new RegExp(`\\b(${keywords.join('|')})\\b`, 'g');
+  const tokens: IParsedToken[] = [];
+  while (i < text.length) {
+    const comment = /(\/\/[^\n]*)|(\/\*(?!\*\/)*\*\/)/;
+    let n = comment.exec(text.substr(i));
+    let s = n !== null ? text.substr(i, n.index) : text.substr(i);
+
+    let p: RegExpExecArray | null = null;
+    while (p = keywordsRegEx.exec(s)) {
+      const pos = doc.positionAt(i + p.index);
+      tokens.push({
+        length: p[0].length,
+        tokenType: 'keyword',
+        tokenModifiers: [],
+        text: p[0],
+        startIndex: i + p.index,
+        startCharacter: pos.character,
+        line: pos.line,
+      });
+    }
+
+    if (n) {
+      i += n.index + n[0].length;
+    } else {
+      break;
+    }
+
+  }
+
+  return tokens;
 }
 
 function equals(a: Diagnostic, b: Diagnostic): boolean {
