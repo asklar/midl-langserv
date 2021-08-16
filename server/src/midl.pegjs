@@ -84,7 +84,7 @@ methodCallParams = (methodCallParam _ "," _ methodCallParams) / methodCallParam
 
 identifier "identifier" = [A-Za-z_][A-Za-z0-9_]* { return text(); }
 
-member = _ attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enumDecl / structDecl / apiContract) tailTrivia*
+member = _ (attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enumDecl / structDecl / apiContract) / namespace) tailTrivia*
 
 tailTrivia = whitespace / comment / ";"
 

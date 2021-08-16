@@ -5,10 +5,10 @@
 	"icon": "images/midl3.png",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
-	"version": "0.0.17",
+	"version": "0.0.18",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/asklar/midl_langserv"
+		"url": "https://github.com/asklar/midl-langserv"
 	},
 	"publisher": "AlexanderSklarMSFT",
 	"categories": [
