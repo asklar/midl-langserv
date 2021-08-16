@@ -29,7 +29,11 @@ describe('Parser tests', async () => {
     it(testName, async (done) => {
       const contents = fs.readFileSync(idlPath).toString();
       const tokens: IParsedToken[] = [];
-      assert.doesNotThrow(() => grammar.parse(contents, { tokenList: tokens }));
+      try {
+        assert.doesNotThrow(() => grammar.parse(contents, { tokenList: tokens }));
+      } catch (e) {
+        assert(false, `thrown exception during parsing: ${e}`);
+      }
       assert.notStrictEqual(tokens.length, 0);
       done();
     });
