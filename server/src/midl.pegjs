@@ -80,7 +80,7 @@ listOfAppliedAttrs = appliedAttr (_ "," _ appliedAttr)*
 appliedAttr = attrname:identifier _ attrCtor? _ 
 attrCtor = openParen _ methodCallParams? _ closeParen
 
-methodCallParams = (methodCallParam _ "," _ methodCallParams) / methodCallParam 
+methodCallParams = methodCallParam _ ("," _ methodCallParam)*
 
 identifier "identifier" = [A-Za-z_][A-Za-z0-9_]* { return text(); }
 
@@ -88,7 +88,7 @@ member = _ (attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enum
 
 tailTrivia = whitespace / comment / ";"
 
-methodCallParam "parameter" = stringLiteral / number / identifier
+methodCallParam "parameter" = stringLiteral / number / namespacedIdentifier
 
 stringLiteral "string" = '"' [^"]* '"' { return emit('string'); }
 
@@ -187,7 +187,8 @@ type = typeName _ ("<" _ listOfGenericsTypes _ ">" )? _ arraySpec? { emit('type'
 arraySpec = openBracket _ closeBracket
 listOfGenericsTypes "list of generic type arguments" = (type _ "," _ listOfGenericsTypes) / type
 
-typeName "type name" = ((!kw) identifier ".")* (!kw) identifier
+typeName "type name" = namespacedIdentifier
+namespacedIdentifier = ((!kw) identifier ".")* (!kw) identifier
 
 property "property" = _ attrHeader _ overridableKW? _ staticKW? _ retType _ propertyName _ openBrace _ (accessor+)  closeBrace tailTrivia*
 propertyName "property name" = identifier { emit('property'); }

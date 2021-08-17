@@ -32,7 +32,8 @@ describe('Parser tests', async () => {
       try {
         assert.doesNotThrow(() => grammar.parse(contents, { tokenList: tokens }));
       } catch (e) {
-        assert(false, `thrown exception during parsing: ${e}`);
+        done(e);
+        return;
       }
       assert.notStrictEqual(tokens.length, 0);
       done();
