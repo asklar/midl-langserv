@@ -1,0 +1,9 @@
+namespace DemoNamespace
+{
+    runtimeclass DemoClass 
+    {
+        DemoClass();
+        Int32 DemoProperty{ get; set; };
+        Boolean IsDemoProperty(Int32 demoParameter);
+    }
+}

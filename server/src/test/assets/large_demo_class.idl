@@ -1,0 +1,45 @@
+namespace DemoNamespace{
+
+	[PUBLIC_API]
+	[webhosthidden]
+	unsealed runtimeclass CoolClass : DemoNamespace.BaseClass
+	{
+			CoolClass();
+
+			// This should always return true...
+			Boolean IsCool{ get; };
+
+			[REQUIRE_NON_NULL]
+			CoolDemoNamespace.TemplateEngine TemplateEngine{ get; set; };
+			[REQUIRE_NON_NULL]
+			CoolDemoNamespace.Hashcode Hashcode{ get; set; };
+	
+			[PROPERTY_CHANGED_CALLBACK]
+			Boolean HasDoneClassyThings{ get; set; };
+	
+			[DEFAULT_VALUE("DemoNamespace.CoolClass")]
+			[MUX_PROPERTY_CHANGED_CALLBACK]
+			String ObjectName{ get; set; };
+
+			event DemoNamespace.ValueChangedHandler<CoolClass, CoolClassNameChangedEventArgs> NameChanged;
+	
+			static String NamespaceAlias{ get; };
+			static String ClassNameAlias{ get; };
+
+			[PREVIEW_API]
+			static DemoNamespace.Validator ObjectNameValdiator{ get; set; };
+	}
+
+	[PUBLIC_API]
+	[webhosthidden]
+	unsealed runtimeclass CoolClassNameChangedEventArgs : DemoNamespace.BaseEventArgs
+	{
+			CoolClassNameChangedEventArgs();
+
+			[REQUIRE_NON_NULL]
+			String OldName{ get; set; };
+
+			[REQUIRE_NON_NULL]
+			String NewName{ get; set; };
+	}
+}

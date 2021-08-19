@@ -1,0 +1,7 @@
+namespace DemoNamespace{
+	enum DemoEnum
+	{
+		IsThisEnum,
+		ThisIsEnum
+	};
+}

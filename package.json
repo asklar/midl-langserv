@@ -90,7 +90,7 @@
 		"watch": "tsc -b -w",
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
 		"test": "pwsh ./scripts/e2e.ps1",
-		"test:parser": "npx mocha server/out/test/index.js",
+		"test:parser": "npm run build && npx mocha server/out/test/index.js",
 		"package": "vsce package"
 	},
 	"devDependencies": {

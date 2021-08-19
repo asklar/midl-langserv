@@ -1,0 +1,18 @@
+namespace DemoNamespace{
+
+	[PREVIEW_API]
+	[webhosthidden]
+	unsealed runtimeclass AttributedClass
+	{
+		AttributedClass();
+
+		[PROPERTY_CHANGED_CALLBACK]
+		[IS_AWESOME_PROPERTY]
+		Object Param{ get; set; };
+
+		[PROPERTY_CHANGED_CALLBACK_DISABLED]
+		[IS_AWESOME_PROPERTY]
+		[IS_PRIVATE]
+		DemoNamespace.DemoClass DemoClass{ get; set; }
+	}
+}
