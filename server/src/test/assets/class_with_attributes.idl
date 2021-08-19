@@ -1,5 +1,5 @@
-namespace DemoNamespace{
-
+namespace DemoNamespace
+{
 	[PREVIEW_API]
 	[webhosthidden]
 	unsealed runtimeclass AttributedClass

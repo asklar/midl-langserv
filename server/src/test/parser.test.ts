@@ -17,36 +17,36 @@ const grammar = pegjs.generate(grammarFile);
 describe('Parser tests', async () => {
 	const testCaseFolders = path.resolve(__dirname, '..', '..', 'src', 'test', 'assets');
 
-  it('Validate idl path for test cases', () => {
-    assert(fs.existsSync(testCaseFolders), `Path ${testCaseFolders} does not exist`);
-  });
-	
+	it('Validate idl path for test cases', () => {
+		assert(fs.existsSync(testCaseFolders), `Path ${testCaseFolders} does not exist`);
+	});
+
 	runParserOnFolder(testCaseFolders);
 
 	const goodIdlPath = process.env['GOOD_IDL_PATH']!;
-	if(fs.existsSync(goodIdlPath)){
+	if (fs.existsSync(goodIdlPath)) {
 		runParserOnFolder(goodIdlPath);
 	}
 });
 
 
-function runParserOnFolder(folderPath: string){
-  const goodIdlFileSpec = path.join(folderPath, '*.idl');
+function runParserOnFolder(folderPath: string) {
+	const goodIdlFileSpec = path.join(folderPath, '*.idl');
 
-  new glob.GlobSync(goodIdlFileSpec).found.forEach(idlPath => {
-    const testName = path.basename(idlPath);
+	new glob.GlobSync(goodIdlFileSpec).found.forEach(idlPath => {
+		const testName = path.basename(idlPath);
 
-    it("can parse file " + testName, async (done) => {
-      const contents = fs.readFileSync(idlPath).toString();
-      const tokens: IParsedToken[] = [];
-      try {
-        assert.doesNotThrow(() => grammar.parse(contents, { tokenList: tokens }));
-      } catch (e) {
-        done(e);
-        return;
-      }
-      assert.notStrictEqual(tokens.length, 0);
-      done();
-    });
-  });
+		it("can parse file " + testName, async (done) => {
+			const contents = fs.readFileSync(idlPath).toString();
+			const tokens: IParsedToken[] = [];
+			try {
+				assert.doesNotThrow(() => grammar.parse(contents, { tokenList: tokens }));
+			} catch (e) {
+				done(e);
+				return;
+			}
+			assert.notStrictEqual(tokens.length, 0);
+			done();
+		});
+	});
 }
