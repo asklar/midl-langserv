@@ -18,7 +18,8 @@ import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokens
 import { TokenTypes } from './TokenType';
 
 import * as appInsights from 'applicationinsights';
-import { stringify } from 'querystring';
+import * as fs from 'fs';
+
 appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
 appInsights.defaultClient.config.disableAppInsights = process.env['DISABLE_MIDL3_TELEMETRY'] === 'true'
 
@@ -95,7 +96,8 @@ export function activate(context: ExtensionContext) {
     client.onNotification('createdDefinition', (p: { text: string, file: string, action: string }) => {
       vscode.env.clipboard.writeText(p.text);
 
-      vscode.window.showInformationMessage('Copied to clipboard 📋', p.action).then(async (s) => {
+      const commands = fs.existsSync(p.file) ? [p.action] : []; 
+      vscode.window.showInformationMessage('Copied to clipboard 📋', ...commands).then(async (s) => {
         if (s) {
           const doc = await vscode.workspace.openTextDocument(p.file);
           await vscode.window.showTextDocument(doc);

@@ -393,7 +393,6 @@ connection.onCodeAction(async (params) => {
       const headerURI = URI.parse(params.textDocument.uri.replace('.idl', '.h'));
       if (headerURI) {
         const headerPath = headerURI.fsPath;
-        if (fs.existsSync(headerPath)) {
 
           const tok = parseResult.tokens.filter(t => {
             return IsInRange(document, {
@@ -432,7 +431,6 @@ connection.onCodeAction(async (params) => {
             codeActions.push(codeAction);
           }
         }
-      }
     } catch { }
   }
   return codeActions;
