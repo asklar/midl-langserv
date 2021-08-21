@@ -8,4 +8,5 @@ export interface IParsedToken {
   tokenModifiers: string[];
   startIndex: number;
   text?: string;
+  data?: Record<string, IParsedToken>;
 }
