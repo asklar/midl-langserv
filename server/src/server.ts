@@ -94,11 +94,15 @@ connection.onInitialize((params: InitializeParams) => {
   if (hasCodeActionCapability) {
     result.capabilities.codeActionProvider = {
       codeActionKinds: [CodeActionKind.QuickFix],
+      resolveProvider: true,
     }
   }
 
   result.capabilities.executeCommandProvider = {
-    commands: [MIDL3_CREATE_PROPERTY],
+    commands: [
+      MIDL3_CREATE_PROPERTY,
+      MIDL3_USE_TYPE,
+    ],
   };
 
   return result;
@@ -233,6 +237,26 @@ const classicToMidl3Map: Record<string, string> = {
   string: 'String',
 };
 
+const midl3ToCppWinRTTypes: Record<string, string> = {
+    Int16: 'int16_t',
+    Int32: 'int32_t',
+    Int64: 'int64_t',
+    UInt8: 'uint8_t',
+    UInt16: 'uint16_t',
+    UInt32: 'uint32_t',
+    UInt64: 'uint64_t',
+    Char: 'char',
+    String: 'winrt::hstring',
+    Single: 'float',
+    Double: 'double',
+    Boolean: 'bool',
+    Guid: 'winrt::guid',
+    void: 'void',
+  };
+
+const types = Object.keys(midl3ToCppWinRTTypes);
+
+
 export async function parseTextWithDiagnostics(textDocument: TextDocument) {
   const parseResult = parseText(textDocument.uri, textDocument.getText());
   let problems = 0;
@@ -328,6 +352,8 @@ function rangeIncludes(bigRange: Range, smallRange: Range) {
 }
 
 const MIDL3_CREATE_PROPERTY = 'midl3.create-property';
+const MIDL3_USE_TYPE = 'midl3.use-midl3-type';
+
 connection.onCodeAction(async (params) => {
   const codeActions: CodeAction[] = [];
   const change: WorkspaceChange = new WorkspaceChange();
@@ -342,15 +368,24 @@ connection.onCodeAction(async (params) => {
     for (const e of errors) {
       if (e.code === 'ClassicType') {
         const midl3Type = (e.data as any).insteadUse;
+
+        const a = change.getTextEditChange(document);
+        a.replace(e.range, midl3Type);
+  
         const codeAction: CodeAction = {
           title: `Use MIDL 3 type: ${midl3Type}`,
           kind: CodeActionKind.QuickFix,
-          data: params.textDocument.uri
+          data: params.textDocument.uri,
+          edit: change.edit,
+          command: {
+            title: 'Use MIDL 3 type',
+            command: MIDL3_USE_TYPE,
+            arguments: [
+              midl3Type,
+            ]
+          }
         };
-        const a = change.getTextEditChange(document);
-        a.replace(e.range, midl3Type);
 
-        codeAction.edit = change.edit;
         codeActions.push(codeAction);
       }
     }
@@ -449,23 +484,6 @@ connection.onCompletion(
         }
       }
     }
-
-    const types = [
-      'Int16',
-      'Int32',
-      'Int64',
-      'UInt8',
-      'UInt16',
-      'UInt32',
-      'UInt64',
-      'Char',
-      'String',
-      'Single',
-      'Double',
-      'Boolean',
-      'Guid',
-      'void',
-    ];
 
 
     const attrs = [
@@ -596,7 +614,7 @@ function findLinkedData(t: IParsedToken, tokenRole: string, tokenType?: string):
 }
 
 function getCppWinRTHeader_Property(property: { name: string; typeName: string; accessors: ('get'|'set')[] }) {
-  const cppTypeName = property.typeName.replace('.', '::');
+  const cppTypeName = getCppWinRTTypeName(property.typeName);
   const isReadOnly = !property.accessors.includes('set');
   const setter = `    void ${property.name}(const ${cppTypeName}& value) { m_${property.name} = value; }`;
 
@@ -612,16 +630,44 @@ ${isReadOnly ? '' : setter}
   return textToInsert;
 }
 
-connection.onExecuteCommand((p: ExecuteCommandParams) => {
+connection.onExecuteCommand(async (p: ExecuteCommandParams) => {
+  console.log('Execute command');
   switch (p.command) {
     case MIDL3_CREATE_PROPERTY: {
+      appInsights.defaultClient.trackEvent({
+        name: 'CreatePropertyDefinition',
+        properties: {
+          version: packageJson.version,
+        },
+      });
       connection.sendNotification('createdDefinition', {
         text: p.arguments![0],
         file: p.arguments![1],
         action: 'Open header file',
       });
+      break;
+    }
+    case MIDL3_USE_TYPE: {
+    const midl3Type = p.arguments![0] as string;
+
+      appInsights.defaultClient.trackEvent({
+        name: 'UseMidl3Type',
+        properties: {
+          version: packageJson.version,
+          type: p.arguments![1],
+        },
+      });
+      break;
     }
   }
   p.workDoneToken = 1;
 })
+
+function getCppWinRTTypeName(typeName: string) {
+  if (types.includes(typeName)) {
+    return midl3ToCppWinRTTypes[typeName];
+  }
+
+  return typeName.replace('.', '::');
+}
 

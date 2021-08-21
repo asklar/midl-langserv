@@ -94,8 +94,8 @@ export function activate(context: ExtensionContext) {
   client.onReady().then(() => {
     client.onNotification('createdDefinition', (p: {text: string, file: string, action: string}) => {
       vscode.env.clipboard.writeText(p.text);
-      const commands: string[] = [p.action];
-      vscode.window.showInformationMessage('Copied to clipboard 📋', ...commands).then(async (s)=>{
+
+      vscode.window.showInformationMessage('Copied to clipboard 📋', p.action).then(async (s)=>{
         if (s) {
           const doc = await vscode.workspace.openTextDocument(p.file);
           await vscode.window.showTextDocument(doc);
