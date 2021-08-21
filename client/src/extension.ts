@@ -10,12 +10,15 @@ import {
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
-	TransportKind
+	TransportKind,
 } from 'vscode-languageclient/node';
+
+import * as vscode from 'vscode';
 import { MidlDocumentSemanticTokensProvider } from './MidlDocumentSemanticTokensProvider';
 import { TokenTypes } from './TokenType';
 
 import * as appInsights from 'applicationinsights';
+import { stringify } from 'querystring';
 appInsights.setup('ae0256bc-e5d8-474a-a1fa-a7ffee86a877').start();
 appInsights.defaultClient.config.disableAppInsights = process.env['DISABLE_MIDL3_TELEMETRY'] === 'true'
 
@@ -88,6 +91,18 @@ export function activate(context: ExtensionContext) {
       version: packageJson.version,
     },
   });
+  client.onReady().then(() => {
+    client.onNotification('setClipboard', (p: {text: string, header: string}) => {
+      vscode.env.clipboard.writeText(p.text);
+      const commands: string[] = [`Open header file ${p.header}`];
+      vscode.window.showInformationMessage('Copied to clipboard 📋', ...commands).then(async (s)=>{
+        if (s) {
+          const doc = await vscode.workspace.openTextDocument(p.header);
+          await vscode.window.showTextDocument(doc);
+        }
+      });
+    });
+  })
 }
 
 export function deactivate(): Thenable<void> | undefined {

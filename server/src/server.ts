@@ -20,7 +20,12 @@ import {
   ChangeAnnotation,
   CodeAction,
   CodeActionKind,
+  CodeActionParams,
+  Range,
+  ExecuteCommandParams,
 } from 'vscode-languageserver/node';
+
+import { URI } from 'vscode-uri';
 
 import {
   TextDocument
@@ -89,9 +94,14 @@ connection.onInitialize((params: InitializeParams) => {
   if (hasCodeActionCapability) {
     result.capabilities.codeActionProvider = {
       codeActionKinds: [CodeActionKind.QuickFix],
-      resolveProvider: true,
+      //resolveProvider: true,
     }
   }
+
+  result.capabilities.executeCommandProvider = {
+    commands: [MIDL3_CREATE_PROPERTY],
+  };
+
   return result;
 });
 
@@ -126,7 +136,7 @@ function parseText(uri: DocumentUri, text: string): { tokens: IParsedToken[], er
   try {
     const parsed = (grammar.parse(text, { tokenList: tokens }) as any[]).filter(x => x !== undefined);
     const t = tokens;
-    console.log(JSON.stringify(t, null, 2));
+    // console.log(JSON.stringify(t, null, 2));
     return { tokens: t, errors: [] };
   } catch (_e) {
     console.log('Error from LSP Server:');
@@ -232,16 +242,16 @@ export async function parseTextWithDiagnostics(textDocument: TextDocument) {
   const settings = await getDocumentSettings(textDocument.uri);
 
   const docText = textDocument.getText();
-  for (const e of parseResult.errors.filter(e => 
-    e.range.start.line === e.range.end.line && 
+  for (const e of parseResult.errors.filter(e =>
+    e.range.start.line === e.range.end.line &&
     e.range.start.character === e.range.end.character - 1)) {
-      const startOffset = textDocument.offsetAt(e.range.start);
-      const nextSpace = docText.substr(startOffset).match(/\s/);
-      if (nextSpace !== null) {
-        e.range.end = textDocument.positionAt(startOffset + nextSpace.index!);
-      } else {
-        e.range.end = textDocument.positionAt(docText.length);
-      }
+    const startOffset = textDocument.offsetAt(e.range.start);
+    const nextSpace = docText.substr(startOffset).match(/\s/);
+    if (nextSpace !== null) {
+      e.range.end = textDocument.positionAt(startOffset + nextSpace.index!);
+    } else {
+      e.range.end = textDocument.positionAt(docText.length);
+    }
   }
 
   for (const t of parseResult.tokens.filter(x => x.tokenType === 'type')) {
@@ -317,18 +327,16 @@ function addCompletionItems(
 function rangeIncludes(bigRange: Range, smallRange: Range) {
   return true;
 }
+
+const MIDL3_CREATE_PROPERTY = 'midl3.create-property';
 connection.onCodeAction(async (params) => {
   const codeActions: CodeAction[] = [];
   const change: WorkspaceChange = new WorkspaceChange();
   const document = documents.get(params.textDocument.uri);
   if (document) {
-    const parseResult = await parseTextWithDiagnostics(document); ///((document.uri, document.getText());
+    const parseResult = await parseTextWithDiagnostics(document);
     const errors = parseResult.errors.filter(e => {
-      const e0 = document.offsetAt(e.range.start);
-      const e1 = document.offsetAt(e.range.end);
-      const p0 = document.offsetAt(params.range.start);
-      const p1 = document.offsetAt(params.range.end);
-      return e0 <= p0 && e1 >= p1;
+      return IsInRange(document, e, params);
     }
     );
 
@@ -347,6 +355,53 @@ connection.onCodeAction(async (params) => {
         codeActions.push(codeAction);
       }
     }
+
+    try {
+      const headerURI = URI.parse(params.textDocument.uri.replace('.idl', '.h'));
+      if (headerURI) {
+        const headerPath = headerURI.fsPath;
+        if (fs.existsSync(headerPath)) {
+          //const headerContent = fs.readFileSync(headerPath);
+
+          const tok = parseResult.tokens.filter(t => {
+            return IsInRange(document, {
+              range: {
+                start: document.positionAt(t.startIndex),
+                end: document.positionAt(t.startIndex + t.length)
+              }
+            }, params);
+          });
+
+          for (const t of tok.filter(t_ => t_.tokenType === 'property')) {
+            const typeName = findLinkedData(t, 'retType', 'typename')!.text;
+            const accessorTokens = (findLinkedData(t, 'accessors')! as unknown as IParsedToken[]);
+            const accessors = accessorTokens.map(a => a.data! as unknown as string);
+            const str = getCppWinRTHeader_Property({
+                name: t.text!,
+                typeName: typeName!,
+                accessors: accessors as (('get'|'set')[])
+            });
+
+            const codeAction: CodeAction = {
+              title: `Create C++/WinRT property ${t.text}`,
+              kind: CodeActionKind.QuickFix,
+              data: {
+                propertyName: t.text
+              },
+              command: {
+                command: MIDL3_CREATE_PROPERTY,
+                title: 'Create property',
+                arguments: [
+                  str,
+                  headerPath
+                ],
+              }
+            };
+            codeActions.push(codeAction);
+          }
+        }
+      }
+    } catch { }
   }
   return codeActions;
 });
@@ -391,7 +446,7 @@ connection.onCompletion(
       for (let i = 0; i < parseResult.tokens.length - 1; i++) {
         if (parseResult.tokens[i + 1].startIndex >= offset) {
           currentToken = parseResult.tokens[i];
-          console.log(`Current token ==== ${currentToken}`);
+          // console.log(`Current token ==== ${currentToken}`);
           break;
         }
       }
@@ -471,6 +526,14 @@ appInsights.defaultClient.trackEvent({
   },
 });
 
+function IsInRange(document: TextDocument, e: { range: Range }, params: CodeActionParams) {
+  const e0 = document.offsetAt(e.range.start);
+  const e1 = document.offsetAt(e.range.end);
+  const p0 = document.offsetAt(params.range.start);
+  const p1 = document.offsetAt(params.range.end);
+  return e0 <= p0 && e1 >= p1;
+}
+
 function getBasicTokenization(doc: TextDocument): IParsedToken[] {
   let i = 0;
   const text = doc.getText();
@@ -515,4 +578,51 @@ function equals(a: Diagnostic, b: Diagnostic): boolean {
     a.range.end.character === b.range.end.character
   );
 }
+
+function findLinkedData(t: IParsedToken, tokenRole: string, tokenType?: string): IParsedToken | undefined {
+  if (!t) return undefined;
+  if (tokenType && t.tokenType === tokenType) return t;
+  if (!t.data) {
+    return tokenType ? undefined : t;
+  }
+
+  if (Object.keys(t.data).includes(tokenRole)) {
+    return findLinkedData(t.data[tokenRole], tokenRole, tokenType);
+  }
+  for (const k of Object.keys(t.data)) {
+    const rt = findLinkedData(t.data![k], tokenRole, tokenType);
+    if (rt) return rt;
+  }
+  if (!tokenType) return t;
+  return undefined;
+}
+
+function getCppWinRTHeader_Property(property: { name: string; typeName: string; accessors: ('get'|'set')[] }) {
+  const cppTypeName = property.typeName.replace('.', '::');
+  const isReadOnly = !property.accessors.includes('set');
+  const setter = `    void ${property.name}(const ${cppTypeName}& value) { m_${property.name} = value; }`;
+
+  const textToInsert = 
+`  // Generated by MIDL VSIX from quick action - move this snippet to the right type declaration.
+  public:
+    ${cppTypeName}  ${property.name}() const noexcept { return m_${property.name}; }
+${isReadOnly ? '' : setter}
+  private:
+    ${isReadOnly ? 'const ' : ''} ${cppTypeName} m_${property.name};
+`;
+
+  return textToInsert;
+}
+
+connection.onExecuteCommand((p: ExecuteCommandParams) => {
+  switch (p.command) {
+    case MIDL3_CREATE_PROPERTY: {
+      connection.sendNotification('setClipboard', {
+        text: p.arguments![0],
+        header: p.arguments![1]
+      });
+    }
+  }
+  p.workDoneToken = 1;
+})
 

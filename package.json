@@ -106,6 +106,7 @@
 	},
 	"dependencies": {
 		"applicationinsights": "^2.1.4",
-		"pegjs": "^0.10.0"
+		"pegjs": "^0.10.0",
+		"vscode-uri": "^3.0.2"
 	}
 }

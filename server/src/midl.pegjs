@@ -17,8 +17,10 @@
   }
   */
 
-  function emit(tokenType, tokenModifiers) {
+  function emit(tokenType, tokenModifiers, data, _text) {
+    const t = _text ? _text : text();
     const l = location();
+
     const token = {
       startIndex: l.start.offset,
       length: l.end.offset - l.start.offset,
@@ -26,7 +28,8 @@
       startCharacter: l.start.column - 1,
       line: l.start.line - 1,
       tokenModifiers: tokenModifiers !== undefined ? tokenModifiers : [],
-      text: text()
+      text: t,
+      data: data,
     };
 
     if (options !== undefined && options.tokenList) {
@@ -102,66 +105,66 @@ _ "whitespaceOrComment"
   = (preprocessorStatement / whitespace / comment)* {return ;} 
   
 classDecl = staticKW?  _ unsealedKW? _ runtimeclassKW _ className _ ((extends? _ openBrace _ classMember* _ closeBrace) / ";")
-staticKW = "static" { emit('keyword'); }
-unsealedKW = "unsealed" { emit('keyword'); }
-runtimeclassKW = "runtimeclass" { emit('keyword'); }
-className "class name" = identifier { emit('class'); }
+staticKW = "static" { return emit('keyword'); }
+unsealedKW = "unsealed" { return emit('keyword'); }
+runtimeclassKW = "runtimeclass" { return emit('keyword'); }
+className "class name" = identifier { return emit('class'); }
 
 extends = ":" _ listOfExtendsTypes
 
 /* ATTRIBUTE DECL */
 attrDecl "attribute" = _ attributeKW _ attributeName _ ((openBrace _ fieldOrCtor* _ closeBrace) / ";")
-attributeKW = "attributeKW" { emit('keyword'); }
-attributeName "attribute name" = identifier { emit('attribute')}
+attributeKW = "attributeKW" { return emit('keyword'); }
+attributeName "attribute name" = identifier { return emit('attribute')}
 
 /* INTERFACE DECL */
 ifaceDecl = _ "interface" _ interfaceName _ ((requires? openBrace _ ifaceMember* _ closeBrace) / ";") 
-interfaceName = identifier { emit('interface'); }
+interfaceName = identifier { return emit('interface'); }
 
 /* METHOD DECL */
 ifaceMember = _ (methodDecl / property / event / field)
 delegateDecl "delegate" = _ delegateKW _ methodSig _ ";"
-delegateKW = "delegate" { emit('keyword'); }
+delegateKW = "delegate" { return emit('keyword'); }
 methodDecl "method declaration" = _ attrHeader _ overridableKW? _ protectedKW? _ staticKW? _ methodSig _ ";"
-overridableKW = "overridable" { emit('keyword'); }
-protectedKW = "protected" { emit('keyword'); }
+overridableKW = "overridable" { return emit('keyword'); }
+protectedKW = "protected" { return emit('keyword'); }
 
 methodSig = retType _ methodName _ openParen _ methodDeclParams? _ closeParen _ 
-methodName = identifier { emit('method'); }
+methodName = identifier { return emit('method'); }
 methodDeclParams = methodDeclParam (_ "," _ methodDeclParams)*
 methodDeclParam = attrHeader _ outKW? _ type _  parameterName
-parameterName = identifier { emit('parameter'); }
+parameterName = identifier { return emit('parameter'); }
 
-outKW = "out" { emit('keyword'); }
+outKW = "out" { return emit('keyword'); }
 
 /* EVENT DECL */
 event "event" = _ attrHeader _ staticKW? _ eventKW _ retType _ eventName _ ";"
-eventKW = "event" { emit('keyword'); }
-eventName "event name"= identifier { emit('method'); }
+eventKW = "event" { return emit('keyword'); }
+eventName "event name"= identifier { return emit('method'); }
 
 /* ENUM DECL */
 enumDecl = _ enumKW _ enumName _ ((openBrace _ enumValues _ closeBrace) / ";") 
-enumKW = "enum" { emit('keyword'); }
-enumName "enum name" = identifier { emit('enum'); }
+enumKW = "enum" { return emit('keyword'); }
+enumName "enum name" = identifier { return emit('enum'); }
 enumValues = enumValue _ ("," _ enumValues)* ","?
 enumValue = _ attrHeader _ enumValueBlock
 enumValueBlock = enumValueDecl / (openBrace _ enumValues  _  closeBrace)
 enumValueDecl = enumMemberName _ ("=" _ integer)?
-enumMemberName "enum member name" = identifier { emit('enumMember'); }
+enumMemberName "enum member name" = identifier { return emit('enumMember'); }
 
 /* STRUCT DECL */
 structDecl "struct" = _ structKW _ structName _ ((openBrace _ field* _ closeBrace) / ";") 
-structKW = "struct" { emit('keyword'); }
-structName "struct name" = identifier { emit('struct'); }
+structKW = "struct" { return emit('keyword'); }
+structName "struct name" = identifier { return emit('struct'); }
 
 field "field" = _ attrHeader _ staticKW? _ type _ fieldNameList  _ ";" 
 fieldNameList = fieldName (_ "," _ fieldName)*
-fieldName "field name" = identifier { emit('property')}
+fieldName "field name" = identifier { return emit('property')}
 
 number = float / integer
 
 integer "integer"
-  = hex / decimal { emit('number'); }
+  = hex / decimal { return emit('number'); }
 
 float = integer (dot integer)? 
 decimal = (_ "-"? _ [0-9]+ { return parseInt(text(), 10); })
@@ -174,29 +177,34 @@ scopeBlock = _ attrHeader _ openBrace _ classMember* _ closeBrace
 fieldOrCtor = (field / ctor) _
 
 ctor "constructor" = _ attrHeader _ ctorName _ openParen _ methodDeclParams? _ closeParen _ ";"
-ctorName "ctor name" = identifier { emit('method'); }
+ctorName "ctor name" = identifier { return emit('method'); }
 
 requires = requiresKW _ listOfRequiresTypes
-requiresKW = "requires" { emit('keyword'); }
+requiresKW = "requires" { return emit('keyword'); }
 listOfRequiresTypes "list of `requires` types" = (type _ "," _ listOfRequiresTypes) / type
 listOfExtendsTypes "list of `extends` types" = attrHeader _ type (_ "," _ listOfExtendsTypes)*
 
-retType = type / voidType { emit('type'); }
+retType = T:type { return emit('type', [], T); } / voidType { return emit('type', []); }
 voidType = "void" 
-type = typeName _ ("<" _ listOfGenericsTypes _ ">" )? _ arraySpec? { emit('type'); }
-arraySpec = openBracket _ closeBracket
+type = TN:typeName _ ("<" _ listOfGenericsTypes _ ">" )? arraySpec? { return emit('type', [], TN); }
+arraySpec = _ openBracket _ closeBracket
 listOfGenericsTypes "list of generic type arguments" = (type _ "," _ listOfGenericsTypes) / type
 
-typeName "type name" = namespacedIdentifier
+typeName "type name" = namespacedIdentifier { return emit('typename'); }
 namespacedIdentifier = ((!kw) identifier ".")* (!kw) identifier
 
-property "property" = _ attrHeader _ overridableKW? _ staticKW? _ retType _ propertyName _ openBrace _ (accessor+)  closeBrace tailTrivia*
-propertyName "property name" = identifier { emit('property'); }
-accessor "accessor" = ("get" / "set") _ ";" _ { emit('method'); }
+property "property" = _ attrHeader _ O:overridableKW? _ S:staticKW? _ 
+                      RETTYPE:retType _ PN:propertyName _ 
+                      openBrace _ A:(accessor+)  closeBrace tailTrivia* { 
+                        return emit('property', [O, S], {retType: RETTYPE, accessors: A}, PN);
+                      }
+
+propertyName "property name" = identifier 
+accessor "accessor" = A:("get" / "set") _ ";" _ { return emit('method', [], A); }
 
 apiContract = apiContractKW _ apiContractName _ ((openBrace _ closeBrace) / ";") 
-apiContractName = identifier { emit('type'); }
-apiContractKW = "apicontract" { emit('keyword'); }
+apiContractName = identifier { return emit('type'); }
+apiContractKW = "apicontract" { return emit('keyword'); }
 
 kw = eventKW ;
 
