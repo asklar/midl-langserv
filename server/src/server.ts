@@ -94,7 +94,6 @@ connection.onInitialize((params: InitializeParams) => {
   if (hasCodeActionCapability) {
     result.capabilities.codeActionProvider = {
       codeActionKinds: [CodeActionKind.QuickFix],
-      //resolveProvider: true,
     }
   }
 
@@ -361,7 +360,6 @@ connection.onCodeAction(async (params) => {
       if (headerURI) {
         const headerPath = headerURI.fsPath;
         if (fs.existsSync(headerPath)) {
-          //const headerContent = fs.readFileSync(headerPath);
 
           const tok = parseResult.tokens.filter(t => {
             return IsInRange(document, {
@@ -617,9 +615,10 @@ ${isReadOnly ? '' : setter}
 connection.onExecuteCommand((p: ExecuteCommandParams) => {
   switch (p.command) {
     case MIDL3_CREATE_PROPERTY: {
-      connection.sendNotification('setClipboard', {
+      connection.sendNotification('createdDefinition', {
         text: p.arguments![0],
-        header: p.arguments![1]
+        file: p.arguments![1],
+        action: 'Open header file',
       });
     }
   }

@@ -92,12 +92,12 @@ export function activate(context: ExtensionContext) {
     },
   });
   client.onReady().then(() => {
-    client.onNotification('setClipboard', (p: {text: string, header: string}) => {
+    client.onNotification('createdDefinition', (p: {text: string, file: string, action: string}) => {
       vscode.env.clipboard.writeText(p.text);
-      const commands: string[] = [`Open header file ${p.header}`];
+      const commands: string[] = [p.action];
       vscode.window.showInformationMessage('Copied to clipboard 📋', ...commands).then(async (s)=>{
         if (s) {
-          const doc = await vscode.workspace.openTextDocument(p.header);
+          const doc = await vscode.workspace.openTextDocument(p.file);
           await vscode.window.showTextDocument(doc);
         }
       });
