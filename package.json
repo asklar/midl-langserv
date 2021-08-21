@@ -5,7 +5,7 @@
 	"icon": "images/midl3.png",
 	"author": "Microsoft Corporation",
 	"license": "MIT",
-	"version": "0.0.22",
+	"version": "0.0.23",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/asklar/midl-langserv"
