@@ -94,7 +94,6 @@ connection.onInitialize((params: InitializeParams) => {
   if (hasCodeActionCapability) {
     result.capabilities.codeActionProvider = {
       codeActionKinds: [CodeActionKind.QuickFix],
-      resolveProvider: true,
     }
   }
 
