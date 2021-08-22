@@ -1,0 +1,25 @@
+namespace DemoNamespace
+{
+	[IS_DEMO_INTERFACE]
+	interface IDemoInterface
+	{
+		void DoSomething();
+	}
+
+	interface IDemoInterface2 requires IDemoInterface, IGreatDemoInterface
+	{
+		void DoSomething();
+	}
+
+	// This fails
+	// interface IDemoInterface3 requires [PREVIEW_API] IDemoInterface
+	// {
+	// 	void DoSomething();
+	// }
+
+	// This fails
+	// interface IDemoInterface4 requires IDemoInterface, [PREVIEW_API] IGreatDemoInterface
+	// {
+	// 	void DoSomething();
+	// }
+}

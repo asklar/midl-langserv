@@ -6,4 +6,14 @@ namespace DemoNamespace
 		IsThisEnum,
 		ThisIsEnum
 	}
+
+	enum DemoBlockEnums
+	{
+		SomeValue,
+		[PREVIEW_API]
+		{
+			OtherValue,
+			AnotherValue
+		}
+	}
 }
