@@ -1,3 +1,4 @@
+[DEMO_NAMESPACE]
 namespace DemoNamespace
 {
 	[PREVIEW_API]
@@ -14,5 +15,11 @@ namespace DemoNamespace
 		[IS_AWESOME_PROPERTY]
 		[IS_PRIVATE]
 		DemoNamespace.DemoClass DemoClass{ get; set; }
+
+		[OBSOLETE]
+		{
+			Object ParameterTemplate{ get; set; }
+			Bool HasParameterTemplate();
+		}
 	}
 }

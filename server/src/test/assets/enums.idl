@@ -1,0 +1,19 @@
+namespace DemoNamespace
+{
+	[DEMO_ENUM( "DemoEnum" )]
+	enum DemoEnum
+	{
+		IsThisEnum,
+		ThisIsEnum
+	}
+
+	enum DemoBlockEnums
+	{
+		SomeValue,
+		[PREVIEW_API]
+		{
+			OtherValue,
+			AnotherValue
+		}
+	}
+}

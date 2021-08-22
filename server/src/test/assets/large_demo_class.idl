@@ -1,46 +1,60 @@
 namespace DemoNamespace
 {
 
+	delegate void ChangedTemplateEngineDelegate();
+
 	[PUBLIC_API]
 	[webhosthidden]
-	unsealed runtimeclass CoolClass : DemoNamespace.BaseClass
+	[overridable(SmartClassBase)]
+	unsealed runtimeclass SmartClass : DemoNamespace.BaseClass
 	{
-		CoolClass();
+		SmartClass();
 
 		// This should always return true...
-		Boolean IsCool{ get; };
+		Boolean IsSmart{ get; };
 
 		[REQUIRE_NON_NULL]
-		CoolDemoNamespace.TemplateEngine TemplateEngine{ get; set; };
+		SmartDemoNamespace.TemplateEngine TemplateEngine{ get; set; };
 		[REQUIRE_NON_NULL]
-		CoolDemoNamespace.Hashcode Hashcode{ get; set; };
+		SmartDemoNamespace.Hashcode Hashcode{ get; set; };
 
 		[PROPERTY_CHANGED_CALLBACK]
 		Boolean HasDoneClassyThings{ get; set; };
 
-		[DEFAULT_VALUE("DemoNamespace.CoolClass")]
+		[DEFAULT_VALUE("DemoNamespace.SmartClass")]
 		[MUX_PROPERTY_CHANGED_CALLBACK]
 		String ObjectName{ get; set; };
 
-		event DemoNamespace.ValueChangedHandler<CoolClass, CoolClassNameChangedEventArgs> NameChanged;
+		overridable void DoOverridableThings();
+
+		event DemoNamespace.ValueChangedHandler<SmartClass, SmartClassNameChangedEventArgs> NameChanged;
+		event ChangedTemplateEngineDelegate ChangedTemplateEngine;
 
 		static String NamespaceAlias{ get; };
 		static String ClassNameAlias{ get; };
+		static String DerivateClassNameAlias();
 
 		[PREVIEW_API]
 		static DemoNamespace.Validator ObjectNameValdiator{ get; set; };
 	}
 
+	apicontract SmartContract{};
+
 	[PUBLIC_API]
 	[webhosthidden]
-	unsealed runtimeclass CoolClassNameChangedEventArgs : DemoNamespace.BaseEventArgs
+	unsealed runtimeclass SmartClassNameChangedEventArgs : DemoNamespace.BaseEventArgs
 	{
-		CoolClassNameChangedEventArgs();
+		SmartClassNameChangedEventArgs();
 
 		[REQUIRE_NON_NULL]
 		String OldName{ get; set; };
 
 		[REQUIRE_NON_NULL]
 		String NewName{ get; set; };
+	}
+
+	static runtimeclass SmartNameFactory
+	{
+		static String GetName(SmartClass SmartClass);
 	}
 }

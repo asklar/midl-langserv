@@ -1,0 +1,43 @@
+// This is some single line comment
+
+/*
+	And here we have some multi line comments
+*/
+namespace DemoNamespace
+{
+
+	// Another single line comment
+
+	/*
+		And here we have some multi line comments again
+	*/
+	[PUBLIC_API]
+	[webhosthidden]
+	unsealed runtimeclass CommentsClass : DemoNamespace.BaseClass
+	{
+		// Single line comment for constructor
+
+		/*
+			And here we have some multi line comments for constructor
+		*/
+		CommentsClass();
+
+		// This should always return true...
+		Boolean HasSingleLineComments{ get; };
+
+		/*
+			And here we have some multi line comments for method
+		*/
+		Boolean HasMultiLineComments{ get; };
+
+		// Single line comment in front of attribute
+		[REQUIRE_NON_NULL]
+		String SingleLineComment{ get; set; };
+
+		/*
+			And here we have some multi line comments for attribute
+		*/
+		[REQUIRE_NON_NULL]
+		String MultiLineComment{ get; set; };
+	}
+}

@@ -1,0 +1,8 @@
+namespace DemoNamespace
+{
+	[DEMO_STRUCT]
+	struct DemoStruct
+	{
+		Int32 demoInt;
+	}
+}
