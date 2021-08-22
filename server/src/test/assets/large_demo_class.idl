@@ -1,6 +1,8 @@
 namespace DemoNamespace
 {
 
+	delegate void ChangedTemplateEngineDelegate();
+
 	[PUBLIC_API]
 	[webhosthidden]
 	unsealed runtimeclass CoolClass : DemoNamespace.BaseClass
@@ -23,6 +25,8 @@ namespace DemoNamespace
 		String ObjectName{ get; set; };
 
 		event DemoNamespace.ValueChangedHandler<CoolClass, CoolClassNameChangedEventArgs> NameChanged;
+		event ChangedTemplateEngineDelegate ChangedTemplateEngine;
+
 
 		static String NamespaceAlias{ get; };
 		static String ClassNameAlias{ get; };

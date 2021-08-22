@@ -1,0 +1,8 @@
+namespace DemoNamespace
+{
+	[IS_DEMO_INTERFACE]
+	interface IDemoInterface
+	{
+		void DoSomething();
+	}
+}

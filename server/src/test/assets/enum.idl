@@ -1,5 +1,6 @@
 namespace DemoNamespace
 {
+	[DEMO_ENUM( "DemoEnum" )]
 	enum DemoEnum
 	{
 		IsThisEnum,
