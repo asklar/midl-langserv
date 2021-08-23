@@ -41,9 +41,7 @@
 }
 
 start
-  = prolog namespace*
-  
-prolog = (importStatement:import / preprocessorStatement / whitespace / comment )*
+  = namespace*
 
 import "import" = importKeyword _ importFile _ ";" 
 importFile = stringLiteral { return emit('import'); }
@@ -102,7 +100,7 @@ multiLineComment = "/*" (!"*/" .)* "*/" {return emit('comment');}
 
 whitespace "whitespace" = [ \t\r\n]
 _ "whitespaceOrComment"
-  = (preprocessorStatement / whitespace / comment)* {return ;} 
+  = (import / preprocessorStatement / whitespace / comment)* {return ;} 
   
 classDecl = staticKW?  _ unsealedKW? _ runtimeclassKW _ className _ ((extends? _ openBrace _ classMember* _ closeBrace) / ";")
 staticKW = "static" { return emit('keyword'); }
@@ -118,7 +116,7 @@ attributeKW = "attributeKW" { return emit('keyword'); }
 attributeName "attribute name" = identifier { return emit('attribute')}
 
 /* INTERFACE DECL */
-ifaceDecl = _ "interface" _ interfaceName _ ((requires? openBrace _ ifaceMember* _ closeBrace) / ";") 
+ifaceDecl = _ "interface" _ interfaceName _ ((requires? _ openBrace _ ifaceMember* _ closeBrace) / ";") 
 interfaceName = identifier { return emit('interface'); }
 
 /* METHOD DECL */
@@ -181,7 +179,7 @@ ctorName "ctor name" = identifier { return emit('method'); }
 
 requires = requiresKW _ listOfRequiresTypes
 requiresKW = "requires" { return emit('keyword'); }
-listOfRequiresTypes "list of `requires` types" = (type _ "," _ listOfRequiresTypes) / type
+listOfRequiresTypes "list of `requires` types" = type (_ "," _ type)*
 listOfExtendsTypes "list of `extends` types" = attrHeader _ type (_ "," _ listOfExtendsTypes)*
 
 retType = T:type { return emit('type', [], T); } / voidType { return emit('type', []); }
@@ -190,7 +188,7 @@ type = TN:typeName _ ("<" _ listOfGenericsTypes _ ">" )? arraySpec? { return emi
 arraySpec = _ openBracket _ closeBracket
 listOfGenericsTypes "list of generic type arguments" = (type _ "," _ listOfGenericsTypes) / type
 
-typeName "type name" = namespacedIdentifier { return emit('typename'); }
+typeName "type name" = ((!voidType) namespacedIdentifier) { return emit('typename'); }
 namespacedIdentifier = ((!kw) identifier ".")* (!kw) identifier
 
 property "property" = _ attrHeader _ O:overridableKW? _ S:staticKW? _ 
