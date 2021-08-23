@@ -1,0 +1,22 @@
+import "foo.idl";
+import "bar.idl";
+import "baz.idl";
+
+namespace B
+{
+    [contractversion(1.0)] apicontract MyContract{};
+
+    [contract(MyContract, 1.0)]
+    static runtimeclass RTC1
+    {
+        static String TheString { get; }; // trailing comment
+    }
+
+    [contract(MyContract, 1.0)]
+    runtimeclass RTC2
+    {
+        static RTC2 UseWindowsSDKType(Windows.ApplicationModel.Activation.IActivatedEventArgs activatedArgs);
+
+        String GetSomething(String param1); // trailing comment
+    }
+}

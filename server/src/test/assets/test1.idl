@@ -1,0 +1,51 @@
+import "foo.idl";
+#include "foo.h"
+#include <bar.h>
+import "bar.idl";
+
+namespace A
+{
+    [contractversion(1.0)] apicontract MyContract{};
+
+    [contract(MyContract, 1.0)]
+    [flags]
+    enum Enum1
+    {
+        Zero =  0x00000000,
+        One  =  0x00000001,
+        Two  =  0x00000002,
+    };
+
+    [contract(MyContract, 1.0)]
+    runtimeclass RTC1
+    {
+        // Some comment
+        Enum1 GetEnum1();
+
+        Boolean BooleanValue { get; };
+        Double DoubleValue { get; };
+
+        // Some comment
+        void Method1(Boolean value);
+        void Method2(Double value);
+    };
+
+    [contract(MyContract, 1.0)]
+    runtimeclass RTC2
+    {
+        // Comment one
+        // Comment two
+        // Comment three
+        static Windows.Foundation.IAsyncOperation<RTC2> GetRTC2Async(String param1, String param2);
+
+        // Comment one
+        // Comment two
+        static void Method1(String param1, Boolean param2);
+        static void Method2(String param1, Double param2);
+
+        Windows.Foundation.IAsyncOperation<RTC1> MethodWithOverLoad();
+        Windows.Foundation.IAsyncOperation<RTC1> MethodWithOverLoad(String param1);
+        Windows.Foundation.IAsyncOperation<RTC1> MethodWithOverLoad(String param1, Windows.Foundation.Collections.ValueSet param2);
+        Windows.Foundation.IAsyncOperation<RTC1> MethodWithOverLoad(String param1, Windows.Foundation.Collections.ValueSet param2, Double param3);
+    }
+}
