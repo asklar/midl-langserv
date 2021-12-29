@@ -253,6 +253,27 @@ const midl3ToCppWinRTTypes: Record<string, string> = {
   void: 'void',
 };
 
+const docs: Record<string, string> = {
+  runtimeclass: '',
+  interface: '',
+  struct: '',
+  enum: '',
+  event: '',
+  delegate: '',
+  requires: '',
+  attribute: '',
+  get: '',
+  set: '',
+  import: '',
+  unsealed: '',
+  static: '',
+  partial: '',
+  out: '',
+  ref: '',
+  'ref const': '',
+  namespace: '',
+  apicontract: '',
+};
 const types = Object.keys(midl3ToCppWinRTTypes);
 
 
@@ -514,13 +535,12 @@ connection.onCompletion(
 // the completion list.
 connection.onCompletionResolve(
   (item: CompletionItem): CompletionItem => {
-    if (item.data === 1) {
-      item.detail = 'A WinRT runtime class';
-      item.documentation = 'Documentation goes here';
-    } else if (item.data === 2) {
-      item.detail = 'A WinRT interface';
-      item.documentation = 'docs';
+    
+    if (item.kind === CompletionItemKind.Keyword) {
+      item.detail = `${item.label} keyword`;
+      item.documentation = docs[item.label];
     }
+
     return item;
   }
 );
