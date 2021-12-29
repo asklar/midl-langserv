@@ -1,0 +1,13 @@
+namespace MethodsWithRefOut
+{
+  interface I1
+  {
+    void Foo(Uint8[] arrayRefValue);
+  }
+  
+  interface I2
+  {
+    void DoSomething(out UInt32 outValue);
+  }
+  
+}
