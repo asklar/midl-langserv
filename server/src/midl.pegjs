@@ -130,10 +130,10 @@ protectedKW = "protected" { return emit('keyword'); }
 methodSig = retType _ methodName _ openParen _ methodDeclParams? _ closeParen _ 
 methodName = identifier { return emit('method'); }
 methodDeclParams = methodDeclParam (_ "," _ methodDeclParams)*
-methodDeclParam = attrHeader _ outKW? _ type _  parameterName
+methodDeclParam = attrHeader _ outRefKW? _ type _  parameterName
 parameterName = identifier { return emit('parameter'); }
 
-outKW = "out" { return emit('keyword'); }
+outRefKW = ("out" / "ref") { return emit('keyword'); }
 
 /* EVENT DECL */
 event "event" = _ attrHeader _ staticKW? _ eventKW _ retType _ eventName _ ";"
