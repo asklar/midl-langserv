@@ -2,7 +2,7 @@ namespace MethodsWithRefOut
 {
   interface I1
   {
-    void Foo(Uint8[] arrayRefValue);
+    void Foo(ref Uint8[] arrayRefValue);
   }
   
   interface I2
