@@ -1,0 +1,4 @@
+namespace DemoNamespace
+{
+  typedef Windows.Foundation.EventHandler<Int32> MyEventHandler;
+}
