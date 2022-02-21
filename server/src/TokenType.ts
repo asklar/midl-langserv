@@ -12,7 +12,7 @@ export const TokenTypes = [
   'enumMember',
   'import',
   'file',
-  'punctuation'
+  'punctuation',
 ];
 
 export type TokenType = typeof TokenTypes[number];

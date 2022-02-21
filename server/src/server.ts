@@ -273,6 +273,7 @@ const docs: Record<string, string> = {
   'ref const': '',
   namespace: '',
   apicontract: '',
+  typedef: '',
 };
 const types = Object.keys(midl3ToCppWinRTTypes);
 
@@ -476,7 +477,8 @@ const keywords = [
   'ref',
   'ref const',
   'namespace',
-  'apicontract'
+  'apicontract',
+  'typedef',
 ];
 
 

@@ -85,7 +85,7 @@ methodCallParams = methodCallParam _ ("," _ methodCallParam)*
 
 identifier "identifier" = [A-Za-z_][A-Za-z0-9_]* { return text(); }
 
-member = _ (attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enumDecl / structDecl / apiContract) / namespace) tailTrivia*
+member = _ (typedef/(attrHeader _ (classDecl / attrDecl / ifaceDecl / delegateDecl / enumDecl / structDecl / apiContract) / namespace)) tailTrivia*
 
 tailTrivia = whitespace / comment / ";"
 
@@ -213,3 +213,7 @@ closeParen = ")" { emit('punctuation'); }
 openBracket = "["  { emit('punctuation'); }
 closeBracket = "]" { emit('punctuation'); }
 dot = "."
+
+typedef = typedefKW _ type _ (!kw) typedefName _ ";"
+typedefKW = "typedef" { return emit("keyword"); }
+typedefName = identifier { return emit("type"); }
