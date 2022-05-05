@@ -174,7 +174,7 @@ scopeBlock = _ attrHeader _ openBrace _ classMember* _ closeBrace
 
 fieldOrCtor = (field / ctor) _
 
-ctor "constructor" = _ attrHeader _ ctorName _ openParen _ methodDeclParams? _ closeParen _ ";"
+ctor "constructor" = _ attrHeader _ protectedKW? _ ctorName _ openParen _ methodDeclParams? _ closeParen _ ";"
 ctorName "ctor name" = identifier { return emit('method'); }
 
 requires = requiresKW _ listOfRequiresTypes
