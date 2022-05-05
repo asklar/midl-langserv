@@ -1,0 +1,8 @@
+namespace DemoNamespace
+{
+  unsealed runtimeclass DemoClass
+  {
+    protected DemoClass();
+    protected DemoClass(String a);
+  }
+}
