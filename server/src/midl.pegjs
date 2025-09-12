@@ -116,7 +116,7 @@ attributeKW = "attributeKW" { return emit('keyword'); }
 attributeName "attribute name" = identifier { return emit('attribute')}
 
 /* INTERFACE DECL */
-ifaceDecl = _ "interface" _ interfaceName _ ((requires? _ openBrace _ ifaceMember* _ closeBrace) / ";") 
+ifaceDecl = _ "interface" _ interfaceName _ ((extends? _ requires? _ openBrace _ ifaceMember* _ closeBrace) / ";") 
 interfaceName = identifier { return emit('interface'); }
 
 /* METHOD DECL */
