@@ -518,6 +518,8 @@ connection.onCompletion(
       'contract',
       'static_name',
       'attributeusage',
+      'contractversion',
+      'uuid',
       //
       'target_runtimeclass',
       'target_interface',
