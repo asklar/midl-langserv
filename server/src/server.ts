@@ -23,6 +23,9 @@ import {
   CodeActionParams,
   Range,
   ExecuteCommandParams,
+  DocumentFormattingParams,
+  DocumentRangeFormattingParams,
+  TextEdit,
 } from 'vscode-languageserver/node';
 
 import { URI } from 'vscode-uri';
@@ -34,6 +37,7 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 import { IParsedToken } from './Model';
+import { formatDocument, formatDocumentRange } from './formatter';
 
 import * as pegjs from 'pegjs';
 
@@ -84,7 +88,10 @@ connection.onInitialize((params: InitializeParams) => {
       // Tell the client that this server supports code completion.
       completionProvider: {
         resolveProvider: true
-      }
+      },
+      // Tell the client that this server supports document formatting.
+      documentFormattingProvider: true,
+      documentRangeFormattingProvider: true
     }
   };
   if (hasWorkspaceFolderCapability) {
@@ -551,6 +558,26 @@ connection.onCompletionResolve(
     return item;
   }
 );
+
+// Handle document formatting
+connection.onDocumentFormatting((params: DocumentFormattingParams): TextEdit[] => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
+  }
+  
+  return formatDocument(document, params.options);
+});
+
+// Handle document range formatting
+connection.onDocumentRangeFormatting((params: DocumentRangeFormattingParams): TextEdit[] => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
+  }
+  
+  return formatDocumentRange(document, params.range, params.options);
+});
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
