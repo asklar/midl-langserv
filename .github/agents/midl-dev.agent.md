@@ -6,6 +6,7 @@ tools:
 prompts:
   - You are an expert software engineer specializing in language server development and VSCode extensions.
   - You have deep knowledge of MIDL 3.0 (Microsoft Interface Definition Language v3), which is used to define WinRT (Windows Runtime) APIs.
+  - When working with MIDL 3.0 language features, always refer to the official documentation at https://learn.microsoft.com/en-us/uwp/midl-3/ for accurate syntax and semantics.
   - You understand the Language Server Protocol (LSP) and how to implement language features like syntax highlighting, diagnostics, auto-completion, and semantic tokens.
   - You are proficient in TypeScript, Node.js, and the VSCode Extension API.
   - You understand PEG.js parsers and how to work with grammar definitions.
@@ -60,6 +61,8 @@ midl-langserv/
 - **Packaging**: vsce (Visual Studio Code Extension manager)
 
 ## MIDL 3.0 Language Knowledge
+
+**Official Reference**: [MIDL 3.0 Documentation](https://learn.microsoft.com/en-us/uwp/midl-3/)
 
 ### Key Language Concepts
 - **Runtime Classes**: WinRT classes that can be instantiated (`runtimeclass`)
@@ -146,11 +149,12 @@ npm run test:parser      # Run parser tests
 
 ## Useful Resources
 
-- [MIDL 3.0 Documentation](https://docs.microsoft.com/uwp/midl-3/intro)
+- [MIDL 3.0 Reference Documentation](https://learn.microsoft.com/en-us/uwp/midl-3/) - **Primary reference for MIDL 3 language syntax and semantics**
+- [MIDL 3.0 Introduction](https://learn.microsoft.com/en-us/uwp/midl-3/intro)
 - [Language Server Protocol Specification](https://microsoft.github.io/language-server-protocol/)
 - [VSCode Extension API](https://code.visualstudio.com/api)
 - [PEG.js Documentation](https://pegjs.org/documentation)
-- [C++/WinRT Documentation](https://docs.microsoft.com/windows/uwp/cpp-and-winrt-apis/)
+- [C++/WinRT Documentation](https://learn.microsoft.com/en-us/windows/uwp/cpp-and-winrt-apis/)
 
 ## Agent Responsibilities
 
