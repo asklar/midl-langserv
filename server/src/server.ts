@@ -23,6 +23,9 @@ import {
   CodeActionParams,
   Range,
   ExecuteCommandParams,
+  DocumentFormattingParams,
+  DocumentRangeFormattingParams,
+  TextEdit,
 } from 'vscode-languageserver/node';
 
 import { URI } from 'vscode-uri';
@@ -34,6 +37,7 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 import { IParsedToken } from './Model';
+import { formatDocument, formatDocumentRange } from './formatter';
 
 import * as pegjs from 'pegjs';
 
@@ -84,7 +88,10 @@ connection.onInitialize((params: InitializeParams) => {
       // Tell the client that this server supports code completion.
       completionProvider: {
         resolveProvider: true
-      }
+      },
+      // Tell the client that this server supports document formatting.
+      documentFormattingProvider: true,
+      documentRangeFormattingProvider: true
     }
   };
   if (hasWorkspaceFolderCapability) {
@@ -177,12 +184,22 @@ function parseText(uri: DocumentUri, text: string): { tokens: IParsedToken[], er
 // The example settings
 interface MidlLSSettings {
   maxNumberOfProblems: number;
+  format?: {
+    braceStyle?: 'newLine' | 'sameLine';
+    indentSize?: number;
+  };
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: MidlLSSettings = { maxNumberOfProblems: 1000 };
+const defaultSettings: MidlLSSettings = { 
+  maxNumberOfProblems: 1000,
+  format: {
+    braceStyle: 'newLine',
+    indentSize: 4
+  }
+};
 let globalSettings: MidlLSSettings = defaultSettings;
 
 // Cache the settings of all open documents
@@ -551,6 +568,38 @@ connection.onCompletionResolve(
     return item;
   }
 );
+
+// Handle document formatting
+connection.onDocumentFormatting(async (params: DocumentFormattingParams): Promise<TextEdit[]> => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
+  }
+  
+  const settings = await getDocumentSettings(params.textDocument.uri);
+  const options = {
+    ...params.options,
+    tabSize: settings.format?.indentSize ?? params.options.tabSize ?? 4
+  };
+  
+  return formatDocument(document, options, settings.format?.braceStyle ?? 'newLine');
+});
+
+// Handle document range formatting
+connection.onDocumentRangeFormatting(async (params: DocumentRangeFormattingParams): Promise<TextEdit[]> => {
+  const document = documents.get(params.textDocument.uri);
+  if (!document) {
+    return [];
+  }
+  
+  const settings = await getDocumentSettings(params.textDocument.uri);
+  const options = {
+    ...params.options,
+    tabSize: settings.format?.indentSize ?? params.options.tabSize ?? 4
+  };
+  
+  return formatDocumentRange(document, params.range, options, settings.format?.braceStyle ?? 'newLine');
+});
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
