@@ -196,10 +196,37 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
       } else if (ch === ']') {
         attributeDepth--;
         if (attributeDepth === 0) {
-          // End of attribute - output it on its own line
-          const line = currentLine.join('').trim();
-          result.push(indent.repeat(indentLevel) + line);
-          currentLine = [];
+          // End of attribute - check what follows to decide if newline needed
+          // Look ahead to see if this is a type declaration keyword or another attribute
+          let j = i + 1;
+          let nextContent = '';
+          while (j < text.length && (text[j] === ' ' || text[j] === '\t' || text[j] === '\n')) {
+            j++;
+          }
+          
+          // Check if next char is another attribute
+          const nextIsAttribute = text[j] === '[';
+          
+          // Get the next word
+          while (j < text.length && /[a-zA-Z_]/.test(text[j])) {
+            nextContent += text[j];
+            j++;
+          }
+          
+          // Keywords that indicate type declarations (attributes should be on separate line)
+          const typeKeywords = ['namespace', 'runtimeclass', 'interface', 'struct', 'enum', 'delegate', 'apicontract'];
+          const isTypeDeclaration = typeKeywords.includes(nextContent);
+          
+          if (isTypeDeclaration || nextIsAttribute) {
+            // Put attribute on its own line for type declarations or when followed by another attribute
+            const line = currentLine.join('').trim();
+            result.push(indent.repeat(indentLevel) + line);
+            currentLine = [];
+          } else {
+            // Keep attribute on same line but add a space after it
+            currentLine.push(' ');
+          }
+          
           state = State.Normal;
         }
       }
@@ -259,9 +286,8 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
       const line = currentLine.join('').trim();
       if (line.length > 0) {
         result.push(indent.repeat(indentLevel) + line);
-      } else {
-        result.push('');
       }
+      // Don't add empty lines here - we'll handle blank lines in post-processing
       currentLine = [];
       i++;
       continue;
@@ -335,22 +361,51 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
     result.push(indent.repeat(indentLevel) + line);
   }
   
-  // Post-process: normalize spacing and remove extra blank lines
+  // Post-process: normalize spacing, handle blank lines, and special cases
   const normalizedResult: string[] = [];
+  let lastNonBlankWasImport = false;
   
   for (let i = 0; i < result.length; i++) {
     let line = result[i];
+    const trimmed = line.trim();
     
-    // Skip all blank lines for now (we'll add them strategically if needed later)
-    if (line.trim() === '') {
+    // Skip blank lines from result (they shouldn't exist anyway after our changes)
+    if (trimmed === '') {
       continue;
     }
     
+    // Check if this is an import statement
+    const isImport = trimmed.startsWith('import ');
+    
+    // If previous was import and this isn't, ensure blank line
+    if (lastNonBlankWasImport && !isImport && normalizedResult.length > 0) {
+      normalizedResult.push('');
+    }
+    
+    lastNonBlankWasImport = isImport;
+    
     // For sameLine brace style, merge opening braces with previous line
-    if (braceStyle === 'sameLine' && line.trim() === '{' && normalizedResult.length > 0) {
+    if (braceStyle === 'sameLine' && trimmed === '{' && normalizedResult.length > 0) {
       const lastIdx = normalizedResult.length - 1;
-      normalizedResult[lastIdx] = normalizedResult[lastIdx] + ' {';
-      continue;
+      // Skip back over any blank lines
+      let targetIdx = lastIdx;
+      while (targetIdx >= 0 && normalizedResult[targetIdx].trim() === '') {
+        targetIdx--;
+      }
+      if (targetIdx >= 0) {
+        normalizedResult[targetIdx] = normalizedResult[targetIdx] + ' {';
+        continue;
+      }
+    }
+    
+    // Handle semicolon after closing brace (e.g., interface IFoo { }; )
+    if (trimmed === ';' && normalizedResult.length > 0) {
+      const lastIdx = normalizedResult.length - 1;
+      // Check if previous line ends with }
+      if (normalizedResult[lastIdx].trim().endsWith('}')) {
+        normalizedResult[lastIdx] = normalizedResult[lastIdx] + ';';
+        continue;
+      }
     }
     
     // Normalize spacing in the line

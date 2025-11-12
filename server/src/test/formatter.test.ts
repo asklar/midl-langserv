@@ -388,4 +388,115 @@ DemoClass();
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
   });
+
+  it('should remove extra blank lines', () => {
+    const input = `namespace foo
+{
+
+
+    runtimeclass bar
+
+    {
+        Int32 x;
+    }
+}`;
+
+    const expected = `namespace foo
+{
+    runtimeclass bar
+    {
+        Int32 x;
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should ensure empty line between imports and first non-import', () => {
+    const input = `import "Windows.Foundation.idl";
+namespace foo
+{
+}`;
+
+    const expected = `import "Windows.Foundation.idl";
+
+namespace foo
+{
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should keep semicolon on same line as closing brace for interfaces', () => {
+    const input = `interface IFoo
+{
+    void Bar();
+}
+;`;
+
+    const expected = `interface IFoo
+{
+    void Bar();
+};
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should keep attributes on same line for method parameters', () => {
+    const input = `interface IFoo
+{
+    void Bar([in] Int32 x, [out] String y);
+}
+;`;
+
+    const expected = `interface IFoo
+{
+    void Bar([in] Int32 x, [out] String y);
+};
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should keep attributes on same line for properties', () => {
+    const input = `runtimeclass Foo
+{
+    [Windows.Foundation.Metadata.DefaultOverload]
+    void Bar();
+    [deprecated("Use NewProp", deprecate, 1)]String OldProp{ get; };
+}`;
+
+    const expected = `runtimeclass Foo
+{
+    [Windows.Foundation.Metadata.DefaultOverload]
+    void Bar();
+    [deprecated("Use NewProp", deprecate, 1)] String OldProp{ get; };
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
 });
