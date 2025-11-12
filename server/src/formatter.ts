@@ -86,11 +86,13 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
     InBlockComment,
     InString,
     InPreprocessor,
-    InPropertyAccessor
+    InPropertyAccessor,
+    InAttribute
   }
   
   let state = State.Normal;
   let lastNonWhitespace = '';
+  let attributeDepth = 0;
   
   while (i < text.length) {
     const ch = text[i];
@@ -172,6 +174,36 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
       if (ch === '"' && text[i - 1] !== '\\') {
         state = State.Normal;
       }
+      i++;
+      continue;
+    }
+    
+    // Handle attributes [...]
+    if (state === State.Normal && ch === '[') {
+      state = State.InAttribute;
+      attributeDepth = 1;
+      currentLine.push(ch);
+      i++;
+      continue;
+    }
+    
+    if (state === State.InAttribute) {
+      currentLine.push(ch);
+      
+      // Track nested brackets (e.g., [foo(bar[0])])
+      if (ch === '[') {
+        attributeDepth++;
+      } else if (ch === ']') {
+        attributeDepth--;
+        if (attributeDepth === 0) {
+          // End of attribute - output it on its own line
+          const line = currentLine.join('').trim();
+          result.push(indent.repeat(indentLevel) + line);
+          currentLine = [];
+          state = State.Normal;
+        }
+      }
+      
       i++;
       continue;
     }

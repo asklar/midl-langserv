@@ -329,4 +329,63 @@ DemoClass();
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
   });
+
+  it('should put attributes on separate lines', () => {
+    const input = `namespace foo{    [foo(a, "b")]runtimeclass bar{ x a;}    }`;
+
+    const expected = `namespace foo
+{
+    [foo(a, "b")]
+    runtimeclass bar
+    {
+        x a;
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should handle multiple attributes', () => {
+    const input = `namespace foo{[attr1][attr2]runtimeclass bar{}}`;
+
+    const expected = `namespace foo
+{
+    [attr1]
+    [attr2]
+    runtimeclass bar
+    {
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should handle attributes with nested brackets', () => {
+    const input = `namespace foo{[attr(arr[0])]runtimeclass bar{}}`;
+
+    const expected = `namespace foo
+{
+    [attr(arr[0])]
+    runtimeclass bar
+    {
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
 });
