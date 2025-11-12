@@ -111,13 +111,13 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^8.0.3",
-		"@types/node": "^12.12.0",
+		"@types/node": "^16.18.126",
 		"@types/pegjs": "^0.10.3",
 		"@typescript-eslint/parser": "^2.3.0",
 		"copyfiles": "^2.4.1",
 		"eslint": "^6.4.0",
 		"mocha": "^8.1.1",
-		"typescript": "^4.2.2",
+		"typescript": "^5.9.3",
 		"vsce": "^1.96.1"
 	},
 	"dependencies": {
