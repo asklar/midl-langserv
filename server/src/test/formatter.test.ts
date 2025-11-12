@@ -208,4 +208,22 @@ DemoClass();
     
     assert.strictEqual(edits.length, 0);
   });
+
+  it('should format compact single-line code', () => {
+    const input = `namespace foo{    runtimeclass bar{    }}`;
+
+    const expected = `namespace foo
+{
+    runtimeclass bar
+    {
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
 });

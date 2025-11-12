@@ -73,160 +73,229 @@ export function formatDocumentRange(
  */
 function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'newLine' | 'sameLine'): string {
   const indent = options.insertSpaces ? ' '.repeat(options.tabSize) : '\t';
-  const lines = text.split('\n');
-  const formattedLines: string[] = [];
   
+  // Parse the text character by character to build properly formatted output
+  const result: string[] = [];
   let indentLevel = 0;
-  let inBlockComment = false;
-  let inAttributeBlock = false;
+  let currentLine: string[] = [];
+  let i = 0;
   
-  for (let i = 0; i < lines.length; i++) {
-    let line = lines[i];
-    const trimmed = line.trim();
+  enum State {
+    Normal,
+    InLineComment,
+    InBlockComment,
+    InString,
+    InPreprocessor,
+    InPropertyAccessor
+  }
+  
+  let state = State.Normal;
+  let lastNonWhitespace = '';
+  
+  while (i < text.length) {
+    const ch = text[i];
+    const next = i + 1 < text.length ? text[i + 1] : '';
+    const peek = (offset: number) => i + offset < text.length ? text[i + offset] : '';
     
-    // Skip empty lines (preserve them but normalize whitespace)
-    if (trimmed === '') {
-      formattedLines.push('');
+    // Handle line comments
+    if (state === State.Normal && ch === '/' && next === '/') {
+      state = State.InLineComment;
+      currentLine.push(ch);
+      i++;
       continue;
     }
     
-    // Handle C preprocessor directives - preserve at column 0
-    if (trimmed.startsWith('#')) {
-      formattedLines.push(trimmed);
+    if (state === State.InLineComment) {
+      currentLine.push(ch);
+      if (ch === '\n') {
+        result.push(indent.repeat(indentLevel) + currentLine.join('').trim());
+        currentLine = [];
+        state = State.Normal;
+      }
+      i++;
       continue;
     }
     
     // Handle block comments
-    if (trimmed.startsWith('/*')) {
-      inBlockComment = true;
-    }
-    if (inBlockComment) {
-      formattedLines.push(indent.repeat(indentLevel) + trimmed);
-      if (trimmed.endsWith('*/')) {
-        inBlockComment = false;
-      }
+    if (state === State.Normal && ch === '/' && next === '*') {
+      state = State.InBlockComment;
+      currentLine.push(ch);
+      i++;
       continue;
     }
     
-    // Handle single-line comments
-    if (trimmed.startsWith('//')) {
-      formattedLines.push(indent.repeat(indentLevel) + trimmed);
-      continue;
-    }
-    
-    // Handle attribute blocks [...]
-    if (trimmed.startsWith('[')) {
-      inAttributeBlock = true;
-      formattedLines.push(indent.repeat(indentLevel) + trimmed);
-      if (trimmed.endsWith(']') || trimmed.includes(']')) {
-        inAttributeBlock = false;
-      }
-      continue;
-    }
-    
-    if (inAttributeBlock) {
-      formattedLines.push(indent.repeat(indentLevel) + trimmed);
-      if (trimmed.endsWith(']') || trimmed.includes(']')) {
-        inAttributeBlock = false;
-      }
-      continue;
-    }
-    
-    // Decrease indent for closing braces
-    if (trimmed.startsWith('}')) {
-      indentLevel = Math.max(0, indentLevel - 1);
-    }
-    
-    // Handle brace placement style
-    if (braceStyle === 'newLine' && trimmed.endsWith('{') && !trimmed.startsWith('{')) {
-      // Split line at the brace if it's not already on its own line
-      const contentBeforeBrace = trimmed.substring(0, trimmed.length - 1).trim();
-      if (contentBeforeBrace.length > 0) {
-        // Add the content without the brace
-        let formattedLine = indent.repeat(indentLevel) + contentBeforeBrace;
-        formattedLine = normalizeSpacing(formattedLine, indent.repeat(indentLevel), braceStyle);
-        formattedLines.push(formattedLine);
-        // Add the brace on its own line
-        formattedLines.push(indent.repeat(indentLevel) + '{');
-        indentLevel++;
+    if (state === State.InBlockComment) {
+      currentLine.push(ch);
+      if (ch === '*' && next === '/') {
+        currentLine.push(next);
+        i += 2;
+        state = State.Normal;
         continue;
       }
-    } else if (braceStyle === 'sameLine' && trimmed === '{') {
-      // For sameLine style, merge standalone opening brace with previous line
-      if (formattedLines.length > 0) {
-        const lastLineIndex = formattedLines.length - 1;
-        formattedLines[lastLineIndex] += ' {';
-        indentLevel++;
+      if (ch === '\n') {
+        result.push(indent.repeat(indentLevel) + currentLine.join('').trim());
+        currentLine = [];
+      }
+      i++;
+      continue;
+    }
+    
+    // Handle preprocessor directives
+    if (state === State.Normal && ch === '#' && (currentLine.length === 0 || currentLine.join('').trim() === '')) {
+      state = State.InPreprocessor;
+      currentLine = ['#'];
+      i++;
+      continue;
+    }
+    
+    if (state === State.InPreprocessor) {
+      currentLine.push(ch);
+      if (ch === '\n') {
+        result.push(currentLine.join('').trim());
+        currentLine = [];
+        state = State.Normal;
+      }
+      i++;
+      continue;
+    }
+    
+    // Handle strings (for future robustness)
+    if (state === State.Normal && ch === '"') {
+      state = State.InString;
+      currentLine.push(ch);
+      i++;
+      continue;
+    }
+    
+    if (state === State.InString) {
+      currentLine.push(ch);
+      if (ch === '"' && text[i - 1] !== '\\') {
+        state = State.Normal;
+      }
+      i++;
+      continue;
+    }
+    
+    // Detect property accessors { get; set; }
+    if (state === State.Normal && ch === '{') {
+      // Look ahead to see if this is a property accessor
+      let j = i + 1;
+      let ahead = '';
+      while (j < text.length && j < i + 50) {
+        if (text[j] === '}') break;
+        ahead += text[j];
+        j++;
+      }
+      if (/^\s*(get|set)\s*;\s*(get|set)?\s*;?\s*$/.test(ahead)) {
+        // This is a property accessor, keep it together
+        state = State.InPropertyAccessor;
+        currentLine.push(ch);
+        i++;
         continue;
       }
     }
     
-    // Format the line with proper indentation
-    let formattedLine = indent.repeat(indentLevel) + trimmed;
+    if (state === State.InPropertyAccessor) {
+      currentLine.push(ch);
+      if (ch === '}') {
+        state = State.Normal;
+        // Normalize the accessor
+        const accessor = currentLine.join('').match(/{\s*(get|set)\s*;\s*(get|set)?\s*;?\s*}/);
+        if (accessor) {
+          const normalized = accessor[0].replace(/\s+/g, ' ').replace(/{ /g, '{ ').replace(/ }/g, ' }');
+          currentLine = [normalized];
+        }
+      }
+      i++;
+      continue;
+    }
     
-    // Normalize spacing around common patterns
-    formattedLine = normalizeSpacing(formattedLine, indent.repeat(indentLevel), braceStyle);
+    // Normal state processing
+    if (ch === '\n') {
+      const line = currentLine.join('').trim();
+      if (line.length > 0) {
+        result.push(indent.repeat(indentLevel) + line);
+      } else {
+        result.push('');
+      }
+      currentLine = [];
+      i++;
+      continue;
+    }
     
-    formattedLines.push(formattedLine);
-    
-    // Increase indent for opening braces
-    if (trimmed.endsWith('{')) {
+    // Handle opening braces
+    if (ch === '{') {
+      const line = currentLine.join('').trim();
+      if (line.length > 0) {
+        if (braceStyle === 'newLine') {
+          result.push(indent.repeat(indentLevel) + line);
+          result.push(indent.repeat(indentLevel) + '{');
+        } else {
+          result.push(indent.repeat(indentLevel) + line + ' {');
+        }
+      } else {
+        result.push(indent.repeat(indentLevel) + '{');
+      }
+      currentLine = [];
       indentLevel++;
+      lastNonWhitespace = '{';
+      i++;
+      continue;
     }
     
-    // Handle closing brace on same line (shouldn't normally happen in MIDL3)
-    if (trimmed.includes('{') && trimmed.includes('}')) {
-      // Reset indent if both braces are on same line
-      const openCount = (trimmed.match(/{/g) || []).length;
-      const closeCount = (trimmed.match(/}/g) || []).length;
-      indentLevel += openCount - closeCount;
+    // Handle closing braces
+    if (ch === '}') {
+      const line = currentLine.join('').trim();
+      indentLevel = Math.max(0, indentLevel - 1);
+      if (line.length > 0) {
+        result.push(indent.repeat(indentLevel + 1) + line);
+      }
+      result.push(indent.repeat(indentLevel) + '}');
+      currentLine = [];
+      lastNonWhitespace = '}';
+      i++;
+      continue;
     }
+    
+    // Handle semicolons - end of statement
+    if (ch === ';') {
+      currentLine.push(ch);
+      const line = currentLine.join('').trim();
+      if (line.length > 0) {
+        result.push(indent.repeat(indentLevel) + line);
+      }
+      currentLine = [];
+      i++;
+      continue;
+    }
+    
+    // Regular characters
+    if (ch === ' ' || ch === '\t') {
+      // Normalize whitespace - only add space if we have content
+      if (currentLine.length > 0 && currentLine[currentLine.length - 1] !== ' ') {
+        currentLine.push(' ');
+      }
+    } else {
+      currentLine.push(ch);
+      if (ch !== ' ' && ch !== '\t') {
+        lastNonWhitespace = ch;
+      }
+    }
+    
+    i++;
+  }
+  
+  // Handle any remaining content
+  const line = currentLine.join('').trim();
+  if (line.length > 0) {
+    result.push(indent.repeat(indentLevel) + line);
   }
   
   // Join lines and ensure file ends with newline
-  let result = formattedLines.join('\n');
-  if (!result.endsWith('\n') && text.length > 0) {
-    result += '\n';
+  let formatted = result.join('\n');
+  if (!formatted.endsWith('\n') && text.length > 0) {
+    formatted += '\n';
   }
   
-  return result;
-}
-
-/**
- * Normalize spacing in a line
- */
-function normalizeSpacing(line: string, indentPrefix: string, braceStyle: 'newLine' | 'sameLine'): string {
-  // Remove indent prefix temporarily for processing
-  let content = line.substring(indentPrefix.length);
-  
-  // Normalize spacing after any identifier followed by whitespace and another token
-  // This handles all keywords generically without hardcoding them
-  content = content.replace(/\b(\w+)\s{2,}/g, '$1 ');
-  
-  // Normalize spacing around colons in inheritance
-  content = content.replace(/\s*:\s*/g, ' : ');
-  
-  // Normalize spacing around commas
-  content = content.replace(/\s*,\s*/g, ', ');
-  
-  // Normalize spacing in property accessors { get; set; }
-  content = content.replace(/{\s*get\s*;\s*set\s*;\s*}/g, '{ get; set; }');
-  content = content.replace(/{\s*get\s*;\s*}/g, '{ get; }');
-  content = content.replace(/{\s*set\s*;\s*}/g, '{ set; }');
-  
-  // Normalize spacing around opening braces based on style
-  if (braceStyle === 'sameLine') {
-    // Only add space if there's text before the brace (not a standalone brace)
-    content = content.replace(/(\S)\s*{\s*$/g, '$1 {');
-  }
-  // For newLine style, braces are already on their own line from formatMidlText
-  
-  // Normalize spacing around parentheses in method declarations
-  content = content.replace(/\(\s+/g, '(');
-  content = content.replace(/\s+\)/g, ')');
-  
-  // Ensure space after semicolons in parameter lists
-  content = content.replace(/;(?=[^\s}])/g, '; ');
-  
-  return indentPrefix + content;
+  return formatted;
 }
