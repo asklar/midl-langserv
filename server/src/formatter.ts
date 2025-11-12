@@ -303,11 +303,75 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
     result.push(indent.repeat(indentLevel) + line);
   }
   
+  // Post-process: normalize spacing and remove extra blank lines
+  const normalizedResult: string[] = [];
+  
+  for (let i = 0; i < result.length; i++) {
+    let line = result[i];
+    
+    // Skip all blank lines for now (we'll add them strategically if needed later)
+    if (line.trim() === '') {
+      continue;
+    }
+    
+    // For sameLine brace style, merge opening braces with previous line
+    if (braceStyle === 'sameLine' && line.trim() === '{' && normalizedResult.length > 0) {
+      const lastIdx = normalizedResult.length - 1;
+      normalizedResult[lastIdx] = normalizedResult[lastIdx] + ' {';
+      continue;
+    }
+    
+    // Normalize spacing in the line
+    line = normalizeLineSpacing(line);
+    normalizedResult.push(line);
+  }
+  
   // Join lines and ensure file ends with newline
-  let formatted = result.join('\n');
+  let formatted = normalizedResult.join('\n');
   if (!formatted.endsWith('\n') && text.length > 0) {
     formatted += '\n';
   }
   
   return formatted;
+}
+
+/**
+ * Normalize spacing within a line
+ */
+function normalizeLineSpacing(line: string): string {
+  // Find the indentation
+  const match = line.match(/^(\s*)(.*)/);
+  if (!match) return line;
+  
+  const indentation = match[1];
+  let content = match[2];
+  
+  // Don't normalize if it's a comment or preprocessor directive
+  if (content.startsWith('//') || content.startsWith('/*') || content.startsWith('#')) {
+    return line;
+  }
+  
+  // Normalize spacing around colons (for inheritance)
+  content = content.replace(/\s*:\s*/g, ' : ');
+  
+  // Normalize spacing around commas
+  content = content.replace(/\s*,\s*/g, ', ');
+  
+  // Normalize multiple spaces to single space (but preserve property accessors)
+  // First protect property accessors
+  const propertyAccessors: string[] = [];
+  content = content.replace(/{\s*(get|set)\s*;\s*(?:(get|set)\s*;)?\s*}/g, (match) => {
+    propertyAccessors.push(match);
+    return `__ACCESSOR_${propertyAccessors.length - 1}__`;
+  });
+  
+  // Now normalize spaces
+  content = content.replace(/\s{2,}/g, ' ');
+  
+  // Restore property accessors
+  content = content.replace(/__ACCESSOR_(\d+)__/g, (match, index) => {
+    return propertyAccessors[index];
+  });
+  
+  return indentation + content;
 }
