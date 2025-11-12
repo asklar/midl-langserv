@@ -8,7 +8,30 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import { formatDocument } from '../formatter';
 
 describe('Formatter tests', () => {
-  it('should format a simple namespace', () => {
+  it('should format with newLine brace style and 4 spaces (default)', () => {
+    const input = `namespace DemoNamespace{
+runtimeclass DemoClass{
+DemoClass();
+}
+}`;
+
+    const expected = `namespace DemoNamespace
+{
+    runtimeclass DemoClass
+    {
+        DemoClass();
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should format with sameLine brace style', () => {
     const input = `namespace DemoNamespace
 {
 runtimeclass DemoClass
@@ -17,17 +40,15 @@ DemoClass();
 }
 }`;
 
-    const expected = `namespace DemoNamespace
-{
-\truntimeclass DemoClass
-\t{
+    const expected = `namespace DemoNamespace {
+\truntimeclass DemoClass {
 \t\tDemoClass();
 \t}
 }
 `;
 
     const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
-    const edits = formatDocument(doc, { tabSize: 1, insertSpaces: false });
+    const edits = formatDocument(doc, { tabSize: 1, insertSpaces: false }, 'sameLine');
     
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
@@ -36,23 +57,23 @@ DemoClass();
   it('should format properties with accessors', () => {
     const input = `namespace DemoNamespace
 {
-\truntimeclass DemoClass
-\t{
-\t\tInt32 DemoProperty{get;set;};
-\t}
+    runtimeclass DemoClass
+    {
+        Int32 DemoProperty{get;set;};
+    }
 }`;
 
     const expected = `namespace DemoNamespace
 {
-\truntimeclass DemoClass
-\t{
-\t\tInt32 DemoProperty{ get; set; };
-\t}
+    runtimeclass DemoClass
+    {
+        Int32 DemoProperty{ get; set; };
+    }
 }
 `;
 
     const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
-    const edits = formatDocument(doc, { tabSize: 1, insertSpaces: false });
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
     
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
@@ -71,17 +92,17 @@ DemoClass();
 
     const expected = `namespace DemoNamespace
 {
-\t// This is a comment
-\truntimeclass DemoClass
-\t{
-\t\t/* Block comment */
-\t\tDemoClass();
-\t}
+    // This is a comment
+    runtimeclass DemoClass
+    {
+        /* Block comment */
+        DemoClass();
+    }
 }
 `;
 
     const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
-    const edits = formatDocument(doc, { tabSize: 1, insertSpaces: false });
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
     
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
@@ -101,47 +122,53 @@ DemoClass();
     const expected = `[DEMO_NAMESPACE]
 namespace DemoNamespace
 {
-\t[PREVIEW_API]
-\truntimeclass DemoClass
-\t{
-\t\tDemoClass();
-\t}
+    [PREVIEW_API]
+    runtimeclass DemoClass
+    {
+        DemoClass();
+    }
 }
 `;
 
     const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
-    const edits = formatDocument(doc, { tabSize: 1, insertSpaces: false });
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
     
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
   });
 
-  it('should format with spaces instead of tabs', () => {
-    const input = `namespace DemoNamespace
+  it('should handle C preprocessor directives', () => {
+    const input = `#ifdef DEMO_FEATURE
+namespace DemoNamespace
 {
+#define MAX_COUNT 100
 runtimeclass DemoClass
 {
 DemoClass();
 }
-}`;
-
-    const expected = `namespace DemoNamespace
-{
-  runtimeclass DemoClass
-  {
-    DemoClass();
-  }
 }
+#endif`;
+
+    const expected = `#ifdef DEMO_FEATURE
+namespace DemoNamespace
+{
+#define MAX_COUNT 100
+    runtimeclass DemoClass
+    {
+        DemoClass();
+    }
+}
+#endif
 `;
 
     const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
-    const edits = formatDocument(doc, { tabSize: 2, insertSpaces: true });
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
     
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
   });
 
-  it('should normalize spacing around keywords', () => {
+  it('should normalize spacing generically', () => {
     const input = `namespace  DemoNamespace
 {
 runtimeclass   DemoClass:IDemoInterface
@@ -152,15 +179,15 @@ DemoClass();
 
     const expected = `namespace DemoNamespace
 {
-\truntimeclass DemoClass : IDemoInterface
-\t{
-\t\tDemoClass();
-\t}
+    runtimeclass DemoClass : IDemoInterface
+    {
+        DemoClass();
+    }
 }
 `;
 
     const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
-    const edits = formatDocument(doc, { tabSize: 1, insertSpaces: false });
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
     
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
@@ -169,15 +196,15 @@ DemoClass();
   it('should return empty array when no changes needed', () => {
     const input = `namespace DemoNamespace
 {
-\truntimeclass DemoClass
-\t{
-\t\tDemoClass();
-\t}
+    runtimeclass DemoClass
+    {
+        DemoClass();
+    }
 }
 `;
 
     const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
-    const edits = formatDocument(doc, { tabSize: 1, insertSpaces: false });
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
     
     assert.strictEqual(edits.length, 0);
   });

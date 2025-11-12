@@ -78,6 +78,22 @@
 					],
 					"default": "off",
 					"description": "Traces the communication between VS Code and the language server."
+				},
+				"midl3.format.braceStyle": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"newLine",
+						"sameLine"
+					],
+					"default": "newLine",
+					"description": "Controls brace placement style. 'newLine' places opening braces on a new line, 'sameLine' places them on the same line."
+				},
+				"midl3.format.indentSize": {
+					"scope": "resource",
+					"type": "number",
+					"default": 4,
+					"description": "Number of spaces per indentation level when using spaces. Overrides editor.tabSize for MIDL3 formatting."
 				}
 			}
 		}

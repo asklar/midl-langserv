@@ -10,11 +10,16 @@ import { TextEdit, Range, Position, FormattingOptions } from 'vscode-languageser
  * Format a MIDL3 document
  * @param document The document to format
  * @param options Formatting options (tabSize, insertSpaces, etc.)
+ * @param braceStyle Brace placement style ('newLine' or 'sameLine')
  * @returns Array of text edits to apply
  */
-export function formatDocument(document: TextDocument, options: FormattingOptions): TextEdit[] {
+export function formatDocument(
+  document: TextDocument, 
+  options: FormattingOptions,
+  braceStyle: 'newLine' | 'sameLine' = 'newLine'
+): TextEdit[] {
   const text = document.getText();
-  const formatted = formatMidlText(text, options);
+  const formatted = formatMidlText(text, options, braceStyle);
   
   // If no changes, return empty array
   if (text === formatted) {
@@ -44,15 +49,17 @@ export function formatDocument(document: TextDocument, options: FormattingOption
  * @param document The document to format
  * @param range The range to format
  * @param options Formatting options
+ * @param braceStyle Brace placement style ('newLine' or 'sameLine')
  * @returns Array of text edits to apply
  */
 export function formatDocumentRange(
   document: TextDocument,
   range: Range,
-  options: FormattingOptions
+  options: FormattingOptions,
+  braceStyle: 'newLine' | 'sameLine' = 'newLine'
 ): TextEdit[] {
   const text = document.getText(range);
-  const formatted = formatMidlText(text, options);
+  const formatted = formatMidlText(text, options, braceStyle);
   
   if (text === formatted) {
     return [];
@@ -64,7 +71,7 @@ export function formatDocumentRange(
 /**
  * Core formatting logic for MIDL3 text
  */
-function formatMidlText(text: string, options: FormattingOptions): string {
+function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'newLine' | 'sameLine'): string {
   const indent = options.insertSpaces ? ' '.repeat(options.tabSize) : '\t';
   const lines = text.split('\n');
   const formattedLines: string[] = [];
@@ -80,6 +87,12 @@ function formatMidlText(text: string, options: FormattingOptions): string {
     // Skip empty lines (preserve them but normalize whitespace)
     if (trimmed === '') {
       formattedLines.push('');
+      continue;
+    }
+    
+    // Handle C preprocessor directives - preserve at column 0
+    if (trimmed.startsWith('#')) {
+      formattedLines.push(trimmed);
       continue;
     }
     
@@ -124,11 +137,35 @@ function formatMidlText(text: string, options: FormattingOptions): string {
       indentLevel = Math.max(0, indentLevel - 1);
     }
     
+    // Handle brace placement style
+    if (braceStyle === 'newLine' && trimmed.endsWith('{') && !trimmed.startsWith('{')) {
+      // Split line at the brace if it's not already on its own line
+      const contentBeforeBrace = trimmed.substring(0, trimmed.length - 1).trim();
+      if (contentBeforeBrace.length > 0) {
+        // Add the content without the brace
+        let formattedLine = indent.repeat(indentLevel) + contentBeforeBrace;
+        formattedLine = normalizeSpacing(formattedLine, indent.repeat(indentLevel), braceStyle);
+        formattedLines.push(formattedLine);
+        // Add the brace on its own line
+        formattedLines.push(indent.repeat(indentLevel) + '{');
+        indentLevel++;
+        continue;
+      }
+    } else if (braceStyle === 'sameLine' && trimmed === '{') {
+      // For sameLine style, merge standalone opening brace with previous line
+      if (formattedLines.length > 0) {
+        const lastLineIndex = formattedLines.length - 1;
+        formattedLines[lastLineIndex] += ' {';
+        indentLevel++;
+        continue;
+      }
+    }
+    
     // Format the line with proper indentation
     let formattedLine = indent.repeat(indentLevel) + trimmed;
     
     // Normalize spacing around common patterns
-    formattedLine = normalizeSpacing(formattedLine, indent.repeat(indentLevel));
+    formattedLine = normalizeSpacing(formattedLine, indent.repeat(indentLevel), braceStyle);
     
     formattedLines.push(formattedLine);
     
@@ -158,21 +195,13 @@ function formatMidlText(text: string, options: FormattingOptions): string {
 /**
  * Normalize spacing in a line
  */
-function normalizeSpacing(line: string, indentPrefix: string): string {
+function normalizeSpacing(line: string, indentPrefix: string, braceStyle: 'newLine' | 'sameLine'): string {
   // Remove indent prefix temporarily for processing
   let content = line.substring(indentPrefix.length);
   
-  // Normalize spacing after keywords
-  const keywords = [
-    'namespace', 'runtimeclass', 'interface', 'struct', 'enum',
-    'delegate', 'requires', 'unsealed', 'static', 'partial'
-  ];
-  
-  for (const keyword of keywords) {
-    // Ensure single space after keyword
-    const keywordRegex = new RegExp(`\\b${keyword}\\s+`, 'g');
-    content = content.replace(keywordRegex, `${keyword} `);
-  }
+  // Normalize spacing after any identifier followed by whitespace and another token
+  // This handles all keywords generically without hardcoding them
+  content = content.replace(/\b(\w+)\s{2,}/g, '$1 ');
   
   // Normalize spacing around colons in inheritance
   content = content.replace(/\s*:\s*/g, ' : ');
@@ -185,9 +214,12 @@ function normalizeSpacing(line: string, indentPrefix: string): string {
   content = content.replace(/{\s*get\s*;\s*}/g, '{ get; }');
   content = content.replace(/{\s*set\s*;\s*}/g, '{ set; }');
   
-  // Normalize spacing around opening braces
-  // Only add space if there's text before the brace (not a standalone brace)
-  content = content.replace(/(\S)\s*{\s*$/g, '$1 {');
+  // Normalize spacing around opening braces based on style
+  if (braceStyle === 'sameLine') {
+    // Only add space if there's text before the brace (not a standalone brace)
+    content = content.replace(/(\S)\s*{\s*$/g, '$1 {');
+  }
+  // For newLine style, braces are already on their own line from formatMidlText
   
   // Normalize spacing around parentheses in method declarations
   content = content.replace(/\(\s+/g, '(');
