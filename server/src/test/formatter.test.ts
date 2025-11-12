@@ -226,4 +226,107 @@ DemoClass();
     assert.strictEqual(edits.length, 1);
     assert.strictEqual(edits[0].newText, expected);
   });
+
+  it('should format compact code with property', () => {
+    const input = `namespace foo{    runtimeclass bar{  Int32 g{get;set;};  }}`;
+
+    const expected = `namespace foo
+{
+    runtimeclass bar
+    {
+        Int32 g{ get; set; };
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1, 'Should have edits');
+    assert.strictEqual(edits[0].newText, expected, 'Should format correctly without losing content');
+  });
+
+  it('should handle multiple properties in compact code', () => {
+    const input = `namespace foo{runtimeclass bar{Int32 a{get;};String b{set;};Boolean c{get;set;};}}`;
+
+    const expected = `namespace foo
+{
+    runtimeclass bar
+    {
+        Int32 a{ get; };
+        String b{ set; };
+        Boolean c{ get; set; };
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should handle nested braces', () => {
+    const input = `namespace outer{namespace inner{runtimeclass Test{}}}`;
+
+    const expected = `namespace outer
+{
+    namespace inner
+    {
+        runtimeclass Test
+        {
+        }
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
+
+  it('should preserve braces in comments', () => {
+    const input = `namespace foo
+{
+    // This has { braces } in comment
+    runtimeclass bar
+    {
+        /* Another { brace } */
+        Int32 prop;
+    }
+}`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    // Should not change because it's already well-formatted
+    // Just ensure it doesn't break
+    assert.strictEqual(edits.length <= 1, true);
+    if (edits.length > 0) {
+      assert.ok(edits[0].newText.includes('{ braces }'));
+      assert.ok(edits[0].newText.includes('{ brace }'));
+    }
+  });
+
+  it('should handle methods with parameters', () => {
+    const input = `namespace foo{runtimeclass bar{void DoSomething(Int32 x,String y);}}`;
+
+    const expected = `namespace foo
+{
+    runtimeclass bar
+    {
+        void DoSomething(Int32 x, String y);
+    }
+}
+`;
+
+    const doc = TextDocument.create('test://test.idl', 'midl3', 1, input);
+    const edits = formatDocument(doc, { tabSize: 4, insertSpaces: true }, 'newLine');
+    
+    assert.strictEqual(edits.length, 1);
+    assert.strictEqual(edits[0].newText, expected);
+  });
 });

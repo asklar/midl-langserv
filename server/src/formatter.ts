@@ -188,8 +188,10 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
       }
       if (/^\s*(get|set)\s*;\s*(get|set)?\s*;?\s*$/.test(ahead)) {
         // This is a property accessor, keep it together
+        // Save what we have before the accessor
+        const beforeAccessor = currentLine.join('');
         state = State.InPropertyAccessor;
-        currentLine.push(ch);
+        currentLine = [beforeAccessor, ch];
         i++;
         continue;
       }
@@ -199,11 +201,21 @@ function formatMidlText(text: string, options: FormattingOptions, braceStyle: 'n
       currentLine.push(ch);
       if (ch === '}') {
         state = State.Normal;
-        // Normalize the accessor
-        const accessor = currentLine.join('').match(/{\s*(get|set)\s*;\s*(get|set)?\s*;?\s*}/);
-        if (accessor) {
-          const normalized = accessor[0].replace(/\s+/g, ' ').replace(/{ /g, '{ ').replace(/ }/g, ' }');
-          currentLine = [normalized];
+        // Normalize the accessor part only
+        const fullLine = currentLine.join('');
+        // Match: everything before { ... get/set ... } ... everything after
+        const match = fullLine.match(/(.*?)({\s*(get|set)\s*;\s*(get|set)?\s*;?\s*})(.*)/);
+        if (match) {
+          const before = match[1].trim();
+          const accessor = match[2];
+          const after = match[5] || '';  // match[5] is everything after }, match[3] and match[4] are the get/set inside
+          // Normalize: ensure single space after opening brace, before closing brace, and after semicolons
+          const normalized = accessor
+            .replace(/\s+/g, ' ')           // collapse multiple spaces
+            .replace(/{\s*/g, '{ ')         // space after {
+            .replace(/\s*}/g, ' }')         // space before }
+            .replace(/;\s*/g, '; ');        // space after semicolons
+          currentLine = [(before + normalized + after).trim()];
         }
       }
       i++;
