@@ -52,7 +52,9 @@ importKeyword = "import" { return emit('keyword'); }
   ( includeKW _ includeReference ) /
   ( ifdefKW _ preprocessorExpression ) /
   ( ifndefKW _ preprocessorExpression ) /
+  ( elifKW _ preprocessorExpression ) /
   ( ifKW _ preprocessorExpression) /
+  ( elseKW ) /
   ( endifKW ) /
   ( defineKW _ identifier preprocessorExpression ) /
   ( undefKW _ identifier )
@@ -61,7 +63,9 @@ importKeyword = "import" { return emit('keyword'); }
 includeKW = "#include" { emit('preProcessor'); }
 ifdefKW = "#ifdef" { emit('preProcessor'); }
 ifndefKW = "#ifndef" { emit('preProcessor'); }
+elifKW = "#elif" { emit('preProcessor'); }
 ifKW = "#if" { emit('preProcessor'); }
+elseKW = "#else" { emit('preProcessor'); }
 endifKW = "#endif" { emit('preProcessor'); }
 defineKW = "#define" { emit('preProcessor'); }
 undefKW = "#undef" { emit('preProcessor'); }

@@ -1,0 +1,38 @@
+#ifndef VERSION
+#define VERSION 3
+#endif
+
+#if VERSION == 1
+
+namespace Version1
+{
+    runtimeclass MyClass
+    {
+        MyClass();
+        Int32 Property1{ get; };
+    }
+}
+
+#elif VERSION == 2
+
+namespace Version2
+{
+    runtimeclass MyClass
+    {
+        MyClass();
+        String Property2{ get; };
+    }
+}
+
+#else
+
+namespace DefaultVersion
+{
+    runtimeclass MyClass
+    {
+        MyClass();
+        Boolean Property3{ get; };
+    }
+}
+
+#endif
