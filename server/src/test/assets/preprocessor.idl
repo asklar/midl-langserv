@@ -1,0 +1,24 @@
+#ifndef FOO
+#define FOO 1
+
+namespace TestNamespace
+{
+    runtimeclass TestClass
+    {
+        TestClass();
+        Int32 TestProperty{ get; };
+    }
+}
+
+#else
+
+namespace AlternateNamespace
+{
+    runtimeclass AlternateClass
+    {
+        AlternateClass();
+        String AlternateProperty{ get; };
+    }
+}
+
+#endif

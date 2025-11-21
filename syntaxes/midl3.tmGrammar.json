@@ -18,7 +18,7 @@
 		},
 		"preprocessor": {
 			"name": "keyword.other",
-			"match": "#(include|define|ifdef|ifndef|if|else|endif|pragma)"
+			"match": "#(include|define|ifdef|ifndef|if|elif|else|endif|pragma)"
 		},
 		"comment": {
 			"patterns": [
