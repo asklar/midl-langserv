@@ -103,7 +103,8 @@ npm run test:parser      # Run parser tests
 - Open any `.idl` file to test language features
 
 ### Publishing
-- Update version: `npm version patch`
+- **Always bump the package version** in `package.json` when making changes that will be published
+- Use semantic versioning: patch (0.0.X) for bug fixes, minor (0.X.0) for features, major (X.0.0) for breaking changes
 - Publishing happens automatically via GitHub Actions on push to main
 
 ## Common Development Tasks
@@ -168,6 +169,7 @@ When working on this repository:
 6. **Document**: Update README or comments if making significant changes
 7. **Security**: Check for vulnerabilities, especially in dependencies
 8. **Validate**: Test language features in a real VSCode instance when possible
+9. **Version Bumping**: Always bump the package version in `package.json` for any PR that will be merged (use patch version for bug fixes, minor for features)
 
 ## Example Tasks
 
