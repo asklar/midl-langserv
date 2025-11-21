@@ -18,6 +18,8 @@
 	"scripts": {},
 	"devDependencies": {
 		"@types/glob": "^7.1.4",
+		"@types/mocha": "^8.2.3",
+		"@types/node": "^16.18.126",
 		"glob": "^7.1.7"
 	}
 }

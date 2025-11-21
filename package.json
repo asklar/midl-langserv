@@ -78,6 +78,22 @@
 					],
 					"default": "off",
 					"description": "Traces the communication between VS Code and the language server."
+				},
+				"midl3.format.braceStyle": {
+					"scope": "resource",
+					"type": "string",
+					"enum": [
+						"newLine",
+						"sameLine"
+					],
+					"default": "newLine",
+					"description": "Controls brace placement style. 'newLine' places opening braces on a new line, 'sameLine' places them on the same line."
+				},
+				"midl3.format.indentSize": {
+					"scope": "resource",
+					"type": "number",
+					"default": 4,
+					"description": "Number of spaces per indentation level when using spaces. Overrides editor.tabSize for MIDL3 formatting."
 				}
 			}
 		}
@@ -95,13 +111,13 @@
 	},
 	"devDependencies": {
 		"@types/mocha": "^8.0.3",
-		"@types/node": "^12.12.0",
+		"@types/node": "^16.18.126",
 		"@types/pegjs": "^0.10.3",
 		"@typescript-eslint/parser": "^2.3.0",
 		"copyfiles": "^2.4.1",
 		"eslint": "^6.4.0",
 		"mocha": "^8.1.1",
-		"typescript": "^4.2.2",
+		"typescript": "^5.9.3",
 		"vsce": "^1.96.1"
 	},
 	"dependencies": {
