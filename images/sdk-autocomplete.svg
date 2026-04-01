@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 340" width="800" height="340">
+  <!-- Background -->
+  <rect width="800" height="340" fill="#1e1e1e" rx="8"/>
+  <!-- Title bar -->
+  <rect width="800" height="32" fill="#323233" rx="8"/>
+  <rect y="24" width="800" height="8" fill="#323233"/>
+  <!-- Tab -->
+  <rect x="0" y="8" width="160" height="24" fill="#1e1e1e" rx="4"/>
+  <text x="16" y="24" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">Widget.idl</text>
+  <!-- Line numbers -->
+  <text x="24" y="68" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">1</text>
+  <text x="24" y="88" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">2</text>
+  <text x="24" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">3</text>
+  <text x="24" y="128" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">4</text>
+  <!-- Code lines -->
+  <text x="52" y="68" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">namespace</text>
+  <text x="130" y="68" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">MyApp</text>
+  <text x="52" y="88" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">{</text>
+  <!-- runtimeclass Widget : Windows.UI.| -->
+  <text x="68" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">runtimeclass</text>
+  <text x="170" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">Widget</text>
+  <text x="225" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">:</text>
+  <text x="249" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">Windows</text>
+  <text x="304" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">.</text>
+  <text x="312" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">UI</text>
+  <text x="328" y="108" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">.</text>
+  <!-- Cursor -->
+  <rect x="336" y="96" width="2" height="16" fill="#d4d4d4"/>
+  <text x="52" y="128" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">}</text>
+  <!-- Autocomplete dropdown -->
+  <rect x="310" y="114" width="220" height="140" fill="#252526" stroke="#454545" stroke-width="1" rx="4"/>
+  <!-- Selected item highlight -->
+  <rect x="311" y="115" width="218" height="26" fill="#04395e" rx="2"/>
+  <!-- Type icon helper -->
+  <!-- Item 1: Composition (selected) -->
+  <rect x="318" y="119" width="18" height="18" fill="#264f78" rx="3"/>
+  <text x="322" y="133" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#4EC9B0;font-weight:bold">T</text>
+  <text x="342" y="133" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">Composition</text>
+  <!-- Item 2: Core -->
+  <rect x="318" y="145" width="18" height="18" fill="#333" rx="3"/>
+  <text x="322" y="159" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#4EC9B0;font-weight:bold">T</text>
+  <text x="342" y="159" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">Core</text>
+  <!-- Item 3: Input -->
+  <rect x="318" y="171" width="18" height="18" fill="#333" rx="3"/>
+  <text x="322" y="185" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#4EC9B0;font-weight:bold">T</text>
+  <text x="342" y="185" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">Input</text>
+  <!-- Item 4: Text -->
+  <rect x="318" y="197" width="18" height="18" fill="#333" rx="3"/>
+  <text x="322" y="211" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#4EC9B0;font-weight:bold">T</text>
+  <text x="342" y="211" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">Text</text>
+  <!-- Item 5: Xaml -->
+  <rect x="318" y="223" width="18" height="18" fill="#333" rx="3"/>
+  <text x="322" y="237" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#4EC9B0;font-weight:bold">T</text>
+  <text x="342" y="237" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">Xaml</text>
+  <!-- Caption -->
+  <text x="400" y="320" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080;text-anchor:middle">Type Windows. → see Foundation, UI, Storage → keep drilling with dots</text>
+</svg>

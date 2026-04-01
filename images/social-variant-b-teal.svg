@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <text x="60" y="460" font-family="Consolas, monospace" font-size="400" font-weight="200" fill="#0EA5E9" opacity="0.04">{</text>
+  <text x="820" y="460" font-family="Consolas, monospace" font-size="400" font-weight="200" fill="#0EA5E9" opacity="0.04">}</text>
+
+  <text x="300" y="340" font-family="Arial, sans-serif" font-size="160" font-weight="900" fill="#ffffff">M</text>
+  <circle cx="490" cy="220" r="22" fill="none" stroke="#0EA5E9" stroke-width="8"/>
+  <line x1="490" y1="242" x2="490" y2="336" stroke="#0EA5E9" stroke-width="8" stroke-linecap="round"/>
+  <text x="530" y="340" font-family="Arial, sans-serif" font-size="160" font-weight="900" fill="#ffffff">DL</text>
+
+  <rect x="300" y="370" width="540" height="6" rx="3" fill="#0EA5E9"/>
+  <text x="300" y="430" font-family="Arial, sans-serif" font-size="28" font-weight="400" fill="#8899bb">A modern compiler for WinRT Interface Definition Language</text>
+</svg>

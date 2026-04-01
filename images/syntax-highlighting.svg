@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="380" viewBox="0 0 780 380">
+  <defs>
+    <style>
+      text { font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace; }
+    </style>
+  </defs>
+
+  <!-- Window background -->
+  <rect width="780" height="380" fill="#1e1e1e"/>
+
+  <!-- Tab bar -->
+  <rect x="0" y="0" width="780" height="28" fill="#252526"/>
+  <rect x="56" y="0" width="120" height="28" fill="#1e1e1e"/>
+  <text x="72" y="18" fill="#d4d4d4" font-size="12">test.idl</text>
+  <text x="148" y="18" fill="#e8a838" font-size="10">1</text>
+  <circle cx="164" cy="14" r="4" fill="#d4d4d4" opacity="0.4"/>
+
+  <!-- Breadcrumb bar -->
+  <rect x="0" y="28" width="780" height="20" fill="#1e1e1e"/>
+  <text x="14" y="42" fill="#a0a0a0" font-size="11">C: &gt; Users &gt; asklar &gt; ≡ test.idl &gt; ...</text>
+
+  <!-- Editor area -->
+  <rect x="0" y="48" width="780" height="148" fill="#1e1e1e"/>
+
+  <!-- Line numbers -->
+  <text x="30" y="72" fill="#858585" font-size="13" text-anchor="end">1</text>
+  <text x="30" y="92" fill="#858585" font-size="13" text-anchor="end">2</text>
+  <text x="30" y="112" fill="#858585" font-size="13" text-anchor="end">3</text>
+  <text x="30" y="132" fill="#858585" font-size="13" text-anchor="end">4</text>
+  <text x="30" y="152" fill="#858585" font-size="13" text-anchor="end">5</text>
+  <text x="30" y="172" fill="#858585" font-size="13" text-anchor="end">6</text>
+  <text x="30" y="192" fill="#858585" font-size="13" text-anchor="end">7</text>
+
+  <!-- Minimap hint -->
+  <rect x="720" y="60" width="40" height="4" rx="1" fill="#569cd6" opacity="0.3"/>
+  <rect x="720" y="68" width="35" height="4" rx="1" fill="#4ec9b0" opacity="0.3"/>
+  <rect x="720" y="76" width="25" height="4" rx="1" fill="#f44747" opacity="0.3"/>
+  <rect x="720" y="84" width="38" height="4" rx="1" fill="#569cd6" opacity="0.3"/>
+
+  <!-- Line 1: namespace Contoso.Widgets { -->
+  <text x="42" y="72" fill="#569cd6" font-size="13">namespace</text>
+  <text x="126" y="72" fill="#4ec9b0" font-size="13">Contoso.Widgets</text>
+  <text x="266" y="72" fill="#d4d4d4" font-size="13">{</text>
+
+  <!-- Line 2: runtimeclass widget { -->
+  <text x="62" y="92" fill="#569cd6" font-size="13">runtimeclass</text>
+  <text x="168" y="92" fill="#4ec9b0" font-size="13">widget</text>
+  <text x="222" y="92" fill="#d4d4d4" font-size="13">{</text>
+  <!-- yellow squiggly under "widget" (MIDL3005 + MIDL3014) - 6 chars -->
+  <path d="M168,97 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2" stroke="#cca700" stroke-width="1.2" fill="none"/>
+
+  <!-- Line 3: Strng Title; (red squiggly) -->
+  <text x="82" y="112" fill="#4ec9b0" font-size="13">Strng</text>
+  <text x="128" y="112" fill="#9cdcfe" font-size="13">Title</text>
+  <text x="172" y="112" fill="#d4d4d4" font-size="13">;</text>
+  <!-- red squiggly under "Strng" (MIDL1001) - 5 chars wide -->
+  <path d="M82,117 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2" stroke="#f44747" stroke-width="1.2" fill="none"/>
+
+  <!-- Line 4: Int32 Width { get; set; }; -->
+  <text x="82" y="132" fill="#569cd6" font-size="13">Int32</text>
+  <text x="126" y="132" fill="#9cdcfe" font-size="13">Width</text>
+  <text x="172" y="132" fill="#d4d4d4" font-size="13">{</text>
+  <text x="184" y="132" fill="#569cd6" font-size="13">get</text>
+  <text x="210" y="132" fill="#d4d4d4" font-size="13">;</text>
+  <text x="220" y="132" fill="#569cd6" font-size="13">set</text>
+  <text x="246" y="132" fill="#d4d4d4" font-size="13">;</text>
+  <text x="256" y="132" fill="#d4d4d4" font-size="13">};</text>
+  <!-- blue squiggly under "Width" (MIDL3016) - 5 chars wide -->
+  <path d="M126,137 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2" stroke="#3794ff" stroke-width="1.2" fill="none"/>
+
+  <!-- Line 5: } -->
+  <text x="62" y="152" fill="#d4d4d4" font-size="13">}</text>
+
+  <!-- Line 6: } -->
+  <text x="42" y="172" fill="#d4d4d4" font-size="13">}</text>
+
+  <!-- Blue accent bar above problems panel -->
+  <rect x="0" y="196" width="780" height="2" fill="#007acc"/>
+
+  <!-- Problems panel header -->
+  <rect x="0" y="198" width="780" height="24" fill="#252526"/>
+  <text x="12" y="214" fill="#d4d4d4" font-size="12" font-weight="bold">PROBLEMS</text>
+  <rect x="82" y="204" width="18" height="14" rx="7" fill="#007acc"/>
+  <text x="87" y="215" fill="#ffffff" font-size="10">4</text>
+  <text x="116" y="214" fill="#858585" font-size="12">OUTPUT</text>
+  <text x="174" y="214" fill="#858585" font-size="12">DEBUG CONSOLE</text>
+  <text x="290" y="214" fill="#858585" font-size="12">TERMINAL</text>
+  <text x="356" y="214" fill="#858585" font-size="12">PORTS</text>
+
+  <!-- File header in problems -->
+  <text x="30" y="240" fill="#d4d4d4" font-size="11">≡ test.idl  <tspan fill="#858585">C:\Users\asklar</tspan></text>
+  <rect x="160" y="230" width="16" height="14" rx="7" fill="#007acc"/>
+  <text x="164" y="241" fill="#ffffff" font-size="10">4</text>
+
+  <!-- Error: MIDL1001 -->
+  <circle cx="30" cy="260" r="5" fill="#f44747"/>
+  <text x="40" y="264" fill="#d4d4d4" font-size="11">Undefined type &apos;Strng&apos;  <tspan fill="#858585">midl(MIDL1001)  [Ln 3, Col 9]</tspan></text>
+
+  <!-- Warning: MIDL3005 -->
+  <circle cx="30" cy="282" r="5" fill="#cca700"/>
+  <text x="40" y="286" fill="#d4d4d4" font-size="11">Runtimeclass &apos;widget&apos; has no constructor. It won&apos;t be default-activatable...  <tspan fill="#858585">midl(MIDL3005)</tspan></text>
+
+  <!-- Info: MIDL3014 -->
+  <circle cx="30" cy="304" r="5" fill="#3794ff"/>
+  <text x="40" y="308" fill="#d4d4d4" font-size="11">Type name &apos;widget&apos; should use PascalCase without underscores.  <tspan fill="#858585">midl(MIDL3014)  [Ln 2, Col 18]</tspan></text>
+
+  <!-- Info: MIDL3016 -->
+  <circle cx="30" cy="326" r="5" fill="#3794ff"/>
+  <text x="40" y="330" fill="#d4d4d4" font-size="11">Property &apos;Width&apos; on &apos;widget&apos; has both get and set. Consider shorthand...  <tspan fill="#858585">midl(MIDL3016)</tspan></text>
+</svg>

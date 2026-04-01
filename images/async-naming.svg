@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="800" height="240">
+  <!-- Background -->
+  <rect width="800" height="240" fill="#1e1e1e" rx="8"/>
+  <!-- Title bar -->
+  <rect width="800" height="32" fill="#323233" rx="8"/>
+  <rect y="24" width="800" height="8" fill="#323233"/>
+  <rect x="0" y="8" width="130" height="24" fill="#1e1e1e" rx="4"/>
+  <text x="12" y="24" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#d4d4d4">Service.idl</text>
+  <!-- Line numbers -->
+  <text x="20" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">1</text>
+  <text x="20" y="82" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">2</text>
+  <text x="20" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">3</text>
+  <text x="20" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">4</text>
+  <text x="20" y="142" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">5</text>
+  <!-- Code -->
+  <text x="48" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">runtimeclass</text>
+  <text x="152" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">Service</text>
+  <text x="48" y="82" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">{</text>
+  <!-- Line 3: IAsyncOperation<String> GetData(); -->
+  <text x="64" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">IAsyncOperation&lt;String&gt;</text>
+  <text x="257" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#DCDCAA">GetData</text>
+  <text x="311" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">();</text>
+  <!-- Info squiggly under GetData -->
+  <path d="M 257 106 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3" fill="none" stroke="#3794FF" stroke-width="1.2"/>
+  <!-- Line 4: IAsyncAction Refresh(); -->
+  <text x="64" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">IAsyncAction</text>
+  <text x="168" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4"> </text>
+  <text x="176" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#DCDCAA">Refresh</text>
+  <text x="232" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">();</text>
+  <!-- Info squiggly under Refresh -->
+  <path d="M 176 126 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3 l 4 3 l 4 -3" fill="none" stroke="#3794FF" stroke-width="1.2"/>
+  <text x="48" y="142" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">}</text>
+  <!-- Lightbulb + tooltip 1 (GetData) -->
+  <text x="238" y="102" style="font-size:14px;fill:#CCA700">💡</text>
+  <rect x="350" y="84" width="410" height="44" fill="#252526" stroke="#454545" stroke-width="1" rx="4"/>
+  <text x="362" y="101" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#3794FF">ℹ Method returning IAsyncOperation should end with 'Async'</text>
+  <text x="362" y="119" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#d4d4d4">Quick Fix: Rename to </text>
+  <text x="530" y="119" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#4EC9B0;font-weight:bold">GetDataAsync</text>
+  <!-- Lightbulb + tooltip 2 (Refresh) -->
+  <text x="158" y="122" style="font-size:14px;fill:#CCA700">💡</text>
+  <rect x="256" y="148" width="410" height="44" fill="#252526" stroke="#454545" stroke-width="1" rx="4"/>
+  <text x="268" y="165" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#3794FF">ℹ Method returning IAsyncAction should end with 'Async'</text>
+  <text x="268" y="183" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#d4d4d4">Quick Fix: Rename to </text>
+  <text x="436" y="183" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#4EC9B0;font-weight:bold">RefreshAsync</text>
+  <!-- Caption -->
+  <text x="400" y="224" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080;text-anchor:middle">Async naming convention enforcement with one-click quick fixes</text>
+</svg>

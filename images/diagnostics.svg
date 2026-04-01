@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="430" viewBox="0 0 800 430">
+  <!-- Window chrome -->
+  <rect width="800" height="430" rx="8" fill="#1e1e1e"/>
+  <rect width="800" height="36" rx="8" fill="#323233"/>
+  <rect y="28" width="800" height="8" fill="#323233"/>
+  <!-- Windows title bar buttons (right side) -->
+  <!-- Minimize -->
+  <rect x="704" y="14" width="10" height="1" fill="#999"/>
+  <!-- Maximize -->
+  <rect x="730" y="10" width="10" height="10" fill="none" style="stroke:#999;stroke-width:1"/>
+  <!-- Close -->
+  <line x1="758" y1="10" x2="768" y2="20" style="stroke:#999;stroke-width:1.2"/>
+  <line x1="768" y1="10" x2="758" y2="20" style="stroke:#999;stroke-width:1.2"/>
+  <rect x="16" y="8" width="140" height="28" rx="4" fill="#1e1e1e"/>
+  <text x="46" y="26" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">Widget.idl</text>
+
+  <rect x="0" y="36" width="44" height="260" fill="#1e1e1e"/>
+
+  <!-- Line 1: namespace MyApp.Widgets  (namespace=9chars=70px, start x=52, space at 122, next at 130) -->
+  <text x="20" y="60" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 1</text>
+  <text x="52" y="60" style="font-family:Consolas,monospace;font-size:13px;fill:#C586C0">namespace</text>
+  <text x="130" y="60" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">MyApp.Widgets</text>
+
+  <!-- Line 2: { -->
+  <text x="20" y="80" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 2</text>
+  <text x="52" y="80" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">{</text>
+
+  <!-- Line 3: // A simple widget class (indent=2spaces+2=72) -->
+  <text x="20" y="100" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 3</text>
+  <text x="68" y="100" style="font-family:Consolas,monospace;font-size:13px;fill:#6A9955">// A simple widget class</text>
+
+  <!-- Line 4: [foo] (indent 1 tab=4spaces from col0 => x=52+16=68) -->
+  <text x="20" y="120" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 4</text>
+  <text x="68" y="120" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">[</text>
+  <text x="76" y="120" style="font-family:Consolas,monospace;font-size:13px;fill:#DCDCAA">foo</text>
+  <text x="99" y="120" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">]</text>
+  <!-- Warning squiggly under foo (76 to 99 = 23px) -->
+  <path d="M76,124 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2" style="fill:none;stroke:#CCA700;stroke-width:2"/>
+
+  <!-- Line 5: runtimeclass Widget (indent 1tab=68, runtimeclass=12chars=94px, space, Widget starts at 68+94+8=170) -->
+  <text x="20" y="140" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 5</text>
+  <text x="68" y="140" style="font-family:Consolas,monospace;font-size:13px;fill:#C586C0">runtimeclass</text>
+  <text x="170" y="140" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">Widget</text>
+
+  <!-- Line 6: { -->
+  <text x="20" y="160" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 6</text>
+  <text x="68" y="160" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">{</text>
+
+  <!-- Line 7: Widget(); (indent 2tabs=8spaces => x=52+8*7.8=114.4~114) actually let's do 2-indent = 8spaces from gutter = 52+62=114 nah.
+       Let's be consistent: col 0=52. 1 indent(4sp)=52+31=83. 2 indent(8sp)=52+62=114. But original had x=92 for 2-indent which is ~5spaces. Let me use 4-space indent: level0=52, level1=83, level2=114. Hmm, that seems wide. Let me just use the original approach: level0=52, level1=68(2sp indent), level2=84(4sp indent). Actually the code has namespace at col0, { at col0, comment at 1-indent, runtimeclass at 1-indent, members at 2-indent. Let me use 4-space tabs: level0=52, level1=52+31=83, level2=52+62=114. That's cleaner.
+       
+       Actually I'm overcomplicating. Let me just use: indent0=52, indent1=68 (2 spaces=16px), indent2=84 (4 spaces=31px). Wait the original code structure is:
+       namespace X     (0 indent)
+       {               (0 indent)
+         // comment    (1 indent = 4 spaces)
+         [foo]         (1 indent)
+         runtimeclass  (1 indent)
+         {             (1 indent)
+           Widget();   (2 indent = 8 spaces)
+           ...
+         }
+       }
+       
+       So 4-space indent. 4 spaces = 4*7.8 = 31.2px
+       indent0 = 52
+       indent1 = 52 + 31 = 83
+       indent2 = 52 + 62 = 114
+  -->
+  <text x="20" y="180" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 7</text>
+  <text x="114" y="180" style="font-family:Consolas,monospace;font-size:13px;fill:#DCDCAA">Widget</text>
+  <text x="161" y="180" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">();</text>
+
+  <!-- Line 8: Strng Name; (typo — indent2=114, Strng=5*7.8=39, space, Name at 161) -->
+  <text x="20" y="200" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 8</text>
+  <text x="114" y="200" style="font-family:Consolas,monospace;font-size:13px;fill:#F44747">Strng</text>
+  <text x="161" y="200" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">Name;</text>
+  <!-- Error squiggly under "Strng" -->
+  <path d="M114,204 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2" style="fill:none;stroke:#F44747;stroke-width:2"/>
+
+  <!-- Line 9: String Name { get; set; }; (indent2=114, String=6*7.8=47, space at 161, Name=4*7.8=31 starts at 169) -->
+  <text x="20" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end"> 9</text>
+  <text x="114" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">String</text>
+  <text x="169" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">Name { </text>
+  <text x="224" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#C586C0">get</text>
+  <text x="247" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">; </text>
+  <text x="263" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#C586C0">set</text>
+  <text x="286" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">; };</text>
+
+  <!-- Line 10: event EventHandler<String> NameChanged; (indent2=114, event=5*7.8=39, space, EventHandler starts at 114+39+8=161) -->
+  <text x="20" y="240" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end">10</text>
+  <text x="114" y="240" style="font-family:Consolas,monospace;font-size:13px;fill:#C586C0">event</text>
+  <text x="161" y="240" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">EventHandler</text>
+  <text x="255" y="240" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">&lt;</text>
+  <text x="263" y="240" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">String</text>
+  <text x="310" y="240" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">&gt;</text>
+  <text x="326" y="240" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">NameChanged;</text>
+
+  <!-- Line 11: } -->
+  <text x="20" y="260" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end">11</text>
+  <text x="83" y="260" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">}</text>
+
+  <!-- Line 12: } -->
+  <text x="20" y="280" style="font-family:Consolas,monospace;font-size:13px;fill:#808080;text-anchor:end">12</text>
+  <text x="52" y="280" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">}</text>
+
+  <!-- Hover tooltip on Strng (rendered last to be opaque) -->
+  <rect x="114" y="208" width="440" height="24" rx="4" fill="#252526" style="stroke:#454545;stroke-width:1"/>
+  <text x="122" y="224" style="font-family:Consolas,monospace;font-size:11px;fill:#F44747">✕</text>
+  <text x="136" y="224" style="font-family:Consolas,monospace;font-size:11px;fill:#d4d4d4">Unknown type 'Strng'. Did you mean 'String'?</text>
+  <text x="464" y="224" style="font-family:Consolas,monospace;font-size:11px;fill:#808080">[MIDL1001]</text>
+  <text x="530" y="224" style="font-size:14px;fill:#CCA700">💡</text>
+
+  <!-- Separator -->
+  <rect x="0" y="292" width="800" height="1" fill="#454545"/>
+
+  <!-- Problems panel -->
+  <rect x="0" y="293" width="800" height="24" fill="#252526"/>
+  <text x="16" y="310" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4;font-weight:bold">PROBLEMS</text>
+  <rect x="90" y="300" width="16" height="14" rx="7" fill="#F44747"/>
+  <text x="95" y="311" style="font-family:Consolas,monospace;font-size:10px;fill:#fff">1</text>
+  <rect x="112" y="300" width="16" height="14" rx="7" fill="#CCA700"/>
+  <text x="117" y="311" style="font-family:Consolas,monospace;font-size:10px;fill:#fff">1</text>
+
+  <text x="24" y="336" style="font-family:Consolas,monospace;font-size:12px;fill:#F44747">●</text>
+  <text x="40" y="336" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Unknown type 'Strng'. Did you mean 'String'?</text>
+  <text x="520" y="336" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">MIDL1001</text>
+  <text x="600" y="336" style="font-family:Consolas,monospace;font-size:12px;fill:#CE9178">Widget.idl</text>
+  <text x="700" y="336" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">[8, 9]</text>
+
+  <text x="24" y="358" style="font-family:Consolas,monospace;font-size:12px;fill:#CCA700">●</text>
+  <text x="40" y="358" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Unknown attribute 'foo'</text>
+  <text x="520" y="358" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">MIDL1020</text>
+  <text x="600" y="358" style="font-family:Consolas,monospace;font-size:12px;fill:#CE9178">Widget.idl</text>
+  <text x="700" y="358" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">[4, 6]</text>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="406" width="800" height="24" fill="#007ACC"/>
+  <text x="16" y="422" style="font-family:Consolas,monospace;font-size:11px;fill:#fff">⚠ 1  ✕ 1</text>
+  <text x="700" y="422" style="font-family:Consolas,monospace;font-size:11px;fill:#fff">MIDL3</text>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+  <!-- Left panel background -->
+  <rect width="390" height="400" rx="8" fill="#1e1e1e"/>
+  <!-- Right panel background -->
+  <rect x="410" width="390" height="400" rx="8" fill="#1e1e1e"/>
+
+  <!-- LEFT PANEL: Attribute completions -->
+  <!-- Title bar -->
+  <rect width="390" height="30" rx="8" fill="#323233"/>
+  <rect y="22" width="390" height="8" fill="#323233"/>
+  <text x="16" y="20" style="font-family:Consolas,monospace;font-size:11px;fill:#d4d4d4">Widget.idl</text>
+
+  <!-- Code lines -->
+  <text x="12" y="55" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">3</text>
+  <text x="30" y="55" style="font-family:Consolas,monospace;font-size:12px;fill:#6A9955">// Widget class</text>
+  <text x="12" y="73" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">4</text>
+  <text x="30" y="73" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">[</text>
+  <rect x="37" y="63" width="1" height="14" fill="#d4d4d4"/>
+  <text x="12" y="91" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">5</text>
+  <text x="30" y="91" style="font-family:Consolas,monospace;font-size:12px;fill:#C586C0">runtimeclass</text>
+  <text x="126" y="91" style="font-family:Consolas,monospace;font-size:12px;fill:#4EC9B0"> Widget</text>
+
+  <!-- Autocomplete dropdown -->
+  <rect x="30" y="78" width="210" height="136" rx="4" fill="#252526" style="stroke:#454545;stroke-width:1"/>
+  <!-- Selected item -->
+  <rect x="31" y="79" width="208" height="20" fill="#094771"/>
+  <rect x="36" y="82" width="14" height="14" rx="2" fill="#C586C0"/>
+  <text x="40" y="93" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">A</text>
+  <text x="56" y="93" style="font-family:Consolas,monospace;font-size:12px;fill:#fff">activatable</text>
+
+  <rect x="36" y="102" width="14" height="14" rx="2" fill="#C586C0"/>
+  <text x="40" y="113" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">A</text>
+  <text x="56" y="113" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">composable</text>
+
+  <rect x="36" y="122" width="14" height="14" rx="2" fill="#C586C0"/>
+  <text x="40" y="133" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">A</text>
+  <text x="56" y="133" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">contract</text>
+
+  <rect x="36" y="142" width="14" height="14" rx="2" fill="#C586C0"/>
+  <text x="40" y="153" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">A</text>
+  <text x="56" y="153" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">marshaling_behavior</text>
+
+  <rect x="36" y="162" width="14" height="14" rx="2" fill="#C586C0"/>
+  <text x="40" y="173" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">A</text>
+  <text x="56" y="173" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">threading</text>
+
+  <rect x="36" y="182" width="14" height="14" rx="2" fill="#C586C0"/>
+  <text x="40" y="193" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">A</text>
+  <text x="56" y="193" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">static</text>
+
+  <!-- Caption -->
+  <text x="195" y="380" style="font-family:Consolas,monospace;font-size:11px;fill:#808080;text-anchor:middle">Only attributes valid on runtimeclass</text>
+
+  <!-- RIGHT PANEL: Type completions -->
+  <!-- Title bar -->
+  <rect x="410" y="0" width="390" height="30" rx="8" fill="#323233"/>
+  <rect x="410" y="22" width="390" height="8" fill="#323233"/>
+  <text x="426" y="20" style="font-family:Consolas,monospace;font-size:11px;fill:#d4d4d4">Types.idl</text>
+
+  <!-- Code lines -->
+  <text x="422" y="55" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">2</text>
+  <text x="440" y="55" style="font-family:Consolas,monospace;font-size:12px;fill:#C586C0">struct</text>
+  <text x="488" y="55" style="font-family:Consolas,monospace;font-size:12px;fill:#4EC9B0"> Point</text>
+  <text x="422" y="73" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">3</text>
+  <text x="440" y="73" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">{</text>
+  <text x="422" y="91" style="font-family:Consolas,monospace;font-size:12px;fill:#808080">4</text>
+  <text x="456" y="91" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4"> </text>
+  <rect x="461" y="81" width="1" height="14" fill="#d4d4d4"/>
+
+  <!-- Autocomplete dropdown -->
+  <rect x="448" y="96" width="180" height="136" rx="4" fill="#252526" style="stroke:#454545;stroke-width:1"/>
+  <!-- Selected -->
+  <rect x="449" y="97" width="178" height="20" fill="#094771"/>
+  <rect x="454" y="100" width="14" height="14" rx="2" fill="#4EC9B0"/>
+  <text x="458" y="111" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">T</text>
+  <text x="474" y="111" style="font-family:Consolas,monospace;font-size:12px;fill:#fff">Int32</text>
+
+  <rect x="454" y="120" width="14" height="14" rx="2" fill="#4EC9B0"/>
+  <text x="458" y="131" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">T</text>
+  <text x="474" y="131" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Int64</text>
+
+  <rect x="454" y="140" width="14" height="14" rx="2" fill="#4EC9B0"/>
+  <text x="458" y="151" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">T</text>
+  <text x="474" y="151" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Single</text>
+
+  <rect x="454" y="160" width="14" height="14" rx="2" fill="#4EC9B0"/>
+  <text x="458" y="171" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">T</text>
+  <text x="474" y="171" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Double</text>
+
+  <rect x="454" y="180" width="14" height="14" rx="2" fill="#4EC9B0"/>
+  <text x="458" y="191" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">T</text>
+  <text x="474" y="191" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Boolean</text>
+
+  <rect x="454" y="200" width="14" height="14" rx="2" fill="#4EC9B0"/>
+  <text x="458" y="211" style="font-family:Consolas,monospace;font-size:9px;fill:#fff;font-weight:bold">T</text>
+  <text x="474" y="211" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">String</text>
+
+  <!-- Caption -->
+  <text x="605" y="380" style="font-family:Consolas,monospace;font-size:11px;fill:#808080;text-anchor:middle">Only value types valid in struct</text>
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="340" viewBox="0 0 900 340">
+  <rect width="900" height="340" rx="8" fill="#1e1e1e"/>
+
+  <!-- Row 1: interface Foo -->
+  <text x="16" y="40" style="font-family:Consolas,monospace;font-size:20px;fill:#CCA700">💡</text>
+  <text x="48" y="40" style="font-family:Consolas,monospace;font-size:13px;fill:#C586C0">interface</text>
+  <text x="126" y="40" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">Foo</text>
+  <text x="240" y="40" style="font-family:Consolas,monospace;font-size:12px;fill:#CCA700">Interface 'Foo' should start with 'I'</text>
+  <text x="620" y="40" style="font-family:Consolas,monospace;font-size:12px;fill:#4EC9B0">✓</text>
+  <text x="636" y="40" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Rename to 'IFoo'</text>
+  <rect x="16" y="54" width="768" height="1" fill="#333"/>
+
+  <!-- Row 2: IAsyncAction DoWork (); -->
+  <text x="16" y="100" style="font-family:Consolas,monospace;font-size:20px;fill:#CCA700">💡</text>
+  <text x="48" y="100" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">IAsyncAction</text>
+  <text x="150" y="100" style="font-family:Consolas,monospace;font-size:13px;fill:#DCDCAA">DoWork</text>
+  <text x="197" y="100" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">();</text>
+  <text x="240" y="100" style="font-family:Consolas,monospace;font-size:12px;fill:#CCA700">Method 'DoWork' should end with 'Async'</text>
+  <text x="620" y="100" style="font-family:Consolas,monospace;font-size:12px;fill:#4EC9B0">✓</text>
+  <text x="636" y="100" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Rename to 'DoWorkAsync'</text>
+  <rect x="16" y="114" width="768" height="1" fill="#333"/>
+
+  <!-- Row 3: String Name { get; set; }; -->
+  <text x="16" y="160" style="font-family:Consolas,monospace;font-size:20px;fill:#CCA700">💡</text>
+  <text x="48" y="160" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">String</text>
+  <text x="103" y="160" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">Name { ... };</text>
+  <text x="240" y="160" style="font-family:Consolas,monospace;font-size:12px;fill:#CCA700">Property can use shorthand: 'String Name;'</text>
+  <text x="620" y="160" style="font-family:Consolas,monospace;font-size:12px;fill:#4EC9B0">✓</text>
+  <text x="636" y="160" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Simplify</text>
+  <rect x="16" y="174" width="768" height="1" fill="#333"/>
+
+  <!-- Row 4: attribute MyTag { } -->
+  <text x="16" y="220" style="font-family:Consolas,monospace;font-size:20px;fill:#CCA700">💡</text>
+  <text x="48" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#C586C0">attribute</text>
+  <text x="126" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#4EC9B0">MyTag</text>
+  <text x="173" y="220" style="font-family:Consolas,monospace;font-size:13px;fill:#d4d4d4">{ }</text>
+  <text x="240" y="220" style="font-family:Consolas,monospace;font-size:12px;fill:#CCA700">Should end with 'Attribute'</text>
+  <text x="620" y="220" style="font-family:Consolas,monospace;font-size:12px;fill:#4EC9B0">✓</text>
+  <text x="636" y="220" style="font-family:Consolas,monospace;font-size:12px;fill:#d4d4d4">Rename to 'MyTagAttribute'</text>
+  <rect x="16" y="234" width="768" height="1" fill="#333"/>
+
+  <!-- Bottom summary -->
+  <text x="300" y="300" style="font-family:Consolas,monospace;font-size:48px;fill:#007ACC;font-weight:bold;text-anchor:end">16</text>
+  <text x="316" y="290" style="font-family:Consolas,monospace;font-size:16px;fill:#d4d4d4">code quality rules</text>
+  <text x="316" y="312" style="font-family:Consolas,monospace;font-size:16px;fill:#808080">with quick fixers</text>
+</svg>

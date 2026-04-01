@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="220" viewBox="0 0 520 220">
+  <defs>
+    <style>
+      text { font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace; }
+    </style>
+  </defs>
+
+  <!-- Editor background -->
+  <rect width="520" height="220" rx="4" fill="#1e1e1e"/>
+
+  <!-- Line number gutter -->
+  <rect x="0" y="0" width="36" height="220" rx="4" fill="#1e1e1e"/>
+
+  <!-- Line numbers -->
+  <text x="28" y="24" fill="#858585" font-size="13" text-anchor="end">1</text>
+  <text x="28" y="44" fill="#858585" font-size="13" text-anchor="end">2</text>
+  <text x="28" y="64" fill="#858585" font-size="13" text-anchor="end">3</text>
+  <text x="28" y="84" fill="#858585" font-size="13" text-anchor="end">4</text>
+  <text x="28" y="104" fill="#858585" font-size="13" text-anchor="end">5</text>
+  <text x="28" y="124" fill="#858585" font-size="13" text-anchor="end">6</text>
+  <text x="28" y="144" fill="#858585" font-size="13" text-anchor="end">7</text>
+  <text x="28" y="164" fill="#858585" font-size="13" text-anchor="end">8</text>
+  <text x="28" y="184" fill="#858585" font-size="13" text-anchor="end">9</text>
+  <text x="28" y="204" fill="#858585" font-size="13" text-anchor="end">10</text>
+
+  <!-- Line 1: // @ref: "Windows.Foundation.winmd" -->
+  <text x="42" y="24" fill="#858585" font-size="13">//</text>
+  <text x="62" y="24" fill="#C586C0" font-size="13" font-weight="bold">@ref:</text>
+  <text x="108" y="24" fill="#ce9178" font-size="13">"Windows.Foundation.winmd"</text>
+
+  <!-- Line 2: // @ref: "../Shared/Common.idl" -->
+  <text x="42" y="44" fill="#858585" font-size="13">//</text>
+  <text x="62" y="44" fill="#C586C0" font-size="13" font-weight="bold">@ref:</text>
+  <text x="108" y="44" fill="#ce9178" font-size="13">"../Shared/Common.idl"</text>
+
+  <!-- Line 3: blank -->
+
+  <!-- Line 4: namespace MyApp -->
+  <text x="42" y="84" fill="#569cd6" font-size="13">namespace</text>
+  <text x="126" y="84" fill="#4ec9b0" font-size="13">MyApp</text>
+
+  <!-- Line 5: { -->
+  <text x="42" y="104" fill="#d4d4d4" font-size="13">{</text>
+
+  <!-- Line 6: runtimeclass Widget -->
+  <text x="62" y="124" fill="#569cd6" font-size="13">runtimeclass</text>
+  <text x="168" y="124" fill="#4ec9b0" font-size="13">Widget</text>
+
+  <!-- Line 7: { -->
+  <text x="62" y="144" fill="#d4d4d4" font-size="13">{</text>
+
+  <!-- Line 8: Windows.Foundation.Uri Source; -->
+  <text x="82" y="164" fill="#4ec9b0" font-size="13">Windows.Foundation.Uri</text>
+  <text x="264" y="164" fill="#9cdcfe" font-size="13">Source</text>
+  <text x="314" y="164" fill="#d4d4d4" font-size="13">;</text>
+
+  <!-- Line 9: } -->
+  <text x="62" y="184" fill="#d4d4d4" font-size="13">}</text>
+
+  <!-- Line 10: } -->
+  <text x="42" y="204" fill="#d4d4d4" font-size="13">}</text>
+</svg>

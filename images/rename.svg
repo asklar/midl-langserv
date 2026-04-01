@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 280" width="800" height="280">
+  <!-- Background -->
+  <rect width="800" height="280" fill="#1e1e1e" rx="8"/>
+  <!-- Title bar -->
+  <rect width="800" height="32" fill="#323233" rx="8"/>
+  <rect y="24" width="800" height="8" fill="#323233"/>
+  <rect x="0" y="8" width="140" height="24" fill="#1e1e1e" rx="4"/>
+  <text x="12" y="24" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#d4d4d4">Catalog.idl</text>
+  <!-- Line numbers -->
+  <text x="20" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">1</text>
+  <text x="20" y="82" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">2</text>
+  <text x="20" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">3</text>
+  <text x="20" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">4</text>
+  <text x="20" y="142" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">5</text>
+  <text x="20" y="162" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">6</text>
+  <text x="20" y="182" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">7</text>
+  <text x="20" y="202" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">8</text>
+  <text x="20" y="222" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080">9</text>
+  <!-- Line 1: interface Foo (highlighted) -->
+  <rect x="44" y="49" width="130" height="18" fill="#613214" rx="2"/>
+  <text x="48" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">interface</text>
+  <text x="120" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">Foo</text>
+  <!-- Line 2 -->
+  <text x="48" y="82" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">{</text>
+  <!-- Line 3: Foo GetItem(); with Foo highlighted -->
+  <rect x="60" y="89" width="26" height="18" fill="#613214" rx="2"/>
+  <text x="64" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">Foo</text>
+  <text x="90" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4"> </text>
+  <text x="98" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#DCDCAA">GetItem</text>
+  <text x="154" y="102" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">();</text>
+  <!-- Line 4 -->
+  <text x="48" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">}</text>
+  <!-- Line 5 blank -->
+  <!-- Line 6: runtimeclass Catalog -->
+  <text x="48" y="142" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">runtimeclass</text>
+  <text x="152" y="142" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">Catalog</text>
+  <text x="48" y="162" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">{</text>
+  <!-- Line 8: requires Foo; with Foo highlighted -->
+  <text x="64" y="182" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">requires</text>
+  <text x="136" y="182" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4"> </text>
+  <rect x="140" y="169" width="26" height="18" fill="#613214" rx="2"/>
+  <text x="144" y="182" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">Foo</text>
+  <text x="168" y="182" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">;</text>
+  <text x="48" y="202" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">}</text>
+  <!-- Rename input widget -->
+  <rect x="108" y="40" width="200" height="28" fill="#3c3c3c" stroke="#007ACC" stroke-width="2" rx="4"/>
+  <!-- Old text crossed, new text -->
+  <text x="118" y="58" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080;text-decoration:line-through">Foo</text>
+  <text x="148" y="58" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4"> → </text>
+  <text x="180" y="58" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4;font-weight:bold">IFoo</text>
+  <!-- Cursor in rename box -->
+  <rect x="212" y="45" width="2" height="16" fill="#d4d4d4"/>
+  <!-- F2 badge -->
+  <rect x="314" y="42" width="30" height="22" fill="#007ACC" rx="4"/>
+  <text x="321" y="57" style="font-family:Consolas,'Cascadia Code',monospace;font-size:10px;fill:#fff;font-weight:bold">F2</text>
+  <!-- "3 references" indicator -->
+  <text x="350" y="58" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#808080">3 references will be updated</text>
+  <!-- Caption -->
+  <text x="400" y="268" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080;text-anchor:middle">F2 → rename all references across the file</text>
+</svg>

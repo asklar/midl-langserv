@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="300" viewBox="0 0 700 300">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cascadia+Code&amp;display=swap');
+      text { font-family: 'Cascadia Code', 'Consolas', 'Courier New', monospace; }
+    </style>
+  </defs>
+
+  <!-- Window chrome -->
+  <rect width="700" height="300" fill="#1e1e1e"/>
+  <rect width="700" height="35" fill="#323233"/>
+
+  <!-- Windows title bar controls -->
+  <line x1="579" y1="17" x2="591" y2="17" stroke="#cccccc" stroke-width="1"/>
+  <rect x="625" y="11" width="12" height="12" fill="none" stroke="#cccccc" stroke-width="1"/>
+  <line x1="671" y1="11" x2="683" y2="23" stroke="#cccccc" stroke-width="1"/>
+  <line x1="683" y1="11" x2="671" y2="23" stroke="#cccccc" stroke-width="1"/>
+
+  <!-- Active tab -->
+  <rect x="0" y="4" width="160" height="31" fill="#1e1e1e"/>
+  <text x="18" y="24" fill="#d4d4d4" font-size="12">📄 Settings.idl</text>
+
+  <!-- Line number gutter -->
+  <rect x="0" y="35" width="44" height="265" fill="#1e1e1e"/>
+
+  <!-- Line numbers -->
+  <text x="30" y="62" fill="#858585" font-size="13" text-anchor="end">1</text>
+  <text x="30" y="82" fill="#858585" font-size="13" text-anchor="end">2</text>
+  <text x="30" y="102" fill="#858585" font-size="13" text-anchor="end">3</text>
+  <text x="30" y="122" fill="#858585" font-size="13" text-anchor="end">4</text>
+  <text x="30" y="142" fill="#858585" font-size="13" text-anchor="end">5</text>
+  <text x="30" y="162" fill="#858585" font-size="13" text-anchor="end">6</text>
+
+  <!-- Line 1: runtimeclass -->
+  <text x="52" y="62" fill="#569cd6" font-size="13">runtimeclass</text>
+  <text x="155" y="62" fill="#4ec9b0" font-size="13">Settings</text>
+  <text x="225" y="62" fill="#d4d4d4" font-size="13">{</text>
+
+  <!-- Line 2: property (verbose form - with warning) -->
+  <text x="72" y="82" fill="#4ec9b0" font-size="13">String</text>
+  <text x="121" y="82" fill="#9cdcfe" font-size="13">Theme</text>
+  <text x="165" y="82" fill="#d4d4d4" font-size="13">{ </text>
+  <text x="184" y="82" fill="#569cd6" font-size="13">get</text>
+  <text x="210" y="82" fill="#d4d4d4" font-size="13">; </text>
+  <text x="226" y="82" fill="#569cd6" font-size="13">set</text>
+  <text x="252" y="82" fill="#d4d4d4" font-size="13">; };</text>
+
+  <!-- Warning squiggle -->
+  <path d="M121,86 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2 l3,-2 l3,2" stroke="#cca700" stroke-width="1.2" fill="none"/>
+
+  <!-- Current line highlight -->
+  <rect x="44" y="69" width="616" height="20" fill="#ffffff" opacity="0.04"/>
+
+  <!-- Lightbulb icon -->
+  <text x="48" y="82" fill="#cca700" font-size="14">💡</text>
+
+  <!-- Line 3: property -->
+  <text x="72" y="102" fill="#4ec9b0" font-size="13">Boolean</text>
+  <text x="130" y="102" fill="#9cdcfe" font-size="13">DarkMode</text>
+  <text x="199" y="102" fill="#d4d4d4" font-size="13">;</text>
+
+  <!-- Line 4: close -->
+  <text x="52" y="122" fill="#d4d4d4" font-size="13">}</text>
+
+  <!-- Code action menu -->
+  <rect x="55" y="92" width="340" height="86" rx="4" fill="#252526" stroke="#454545" stroke-width="1"/>
+
+  <!-- Menu header -->
+  <text x="70" y="112" fill="#858585" font-size="11">Quick Fix...</text>
+
+  <!-- Separator -->
+  <rect x="60" y="118" width="330" height="1" fill="#454545"/>
+
+  <!-- Selected item -->
+  <rect x="56" y="122" width="338" height="24" fill="#094771"/>
+  <text x="70" y="139" fill="#ffffff" font-size="12">✨ Use property shorthand: 'String Theme;'</text>
+
+  <!-- Second item -->
+  <text x="70" y="163" fill="#d4d4d4" font-size="12">🔧 Add missing default constructor</text>
+</svg>

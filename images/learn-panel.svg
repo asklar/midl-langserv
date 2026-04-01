@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 340" width="800" height="340">
+  <!-- Background -->
+  <rect width="800" height="340" fill="#1e1e1e" rx="8"/>
+  <!-- Title bar -->
+  <rect width="800" height="32" fill="#323233" rx="8"/>
+  <rect y="24" width="800" height="8" fill="#323233"/>
+  <!-- Left tab -->
+  <rect x="0" y="8" width="120" height="24" fill="#1e1e1e" rx="4"/>
+  <text x="12" y="24" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#d4d4d4">Widget.idl</text>
+  <!-- Splitter -->
+  <rect x="480" y="32" width="2" height="308" fill="#454545"/>
+  <!-- RIGHT: Learn panel tab -->
+  <rect x="482" y="8" width="200" height="24" fill="#1e1e1e" rx="4"/>
+  <text x="494" y="24" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#d4d4d4">📖 Microsoft Learn</text>
+  <!-- LEFT PANE: Code -->
+  <text x="16" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080">1</text>
+  <text x="16" y="80" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080">2</text>
+  <text x="16" y="98" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080">3</text>
+  <text x="16" y="116" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080">4</text>
+  <text x="16" y="134" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080">5</text>
+  <text x="16" y="152" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080">6</text>
+  <text x="40" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#C586C0">runtimeclass</text>
+  <text x="136" y="62" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#4EC9B0">Widget</text>
+  <text x="40" y="80" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">{</text>
+  <!-- IVector highlighted -->
+  <rect x="54" y="86" width="346" height="16" fill="#264f78" rx="2"/>
+  <text x="56" y="98" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#4EC9B0">Windows.Foundation.Collections.IVector&lt;String&gt;</text>
+  <text x="402" y="98" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">Items;</text>
+  <text x="56" y="116" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#4EC9B0">IMapView</text>
+  <text x="120" y="116" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">&lt;</text>
+  <text x="128" y="116" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#4EC9B0">String</text>
+  <text x="176" y="116" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">, </text>
+  <text x="192" y="116" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#4EC9B0">Object</text>
+  <text x="240" y="116" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">&gt; Props;</text>
+  <text x="40" y="134" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">}</text>
+  <!-- Hover tooltip -->
+  <rect x="50" y="104" width="345" height="60" fill="#252526" stroke="#454545" stroke-width="1" rx="4"/>
+  <text x="62" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4;font-weight:bold">IVector&lt;T&gt;</text>
+  <text x="170" y="122" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#808080">— Windows.Foundation.Collections</text>
+  <text x="62" y="140" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#808080">Represents a random-access collection of elements.</text>
+  <text x="62" y="156" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#3794FF">📖 View on Microsoft Learn</text>
+  <!-- RIGHT PANE: Learn panel -->
+  <rect x="482" y="32" width="318" height="308" fill="#252526"/>
+  <!-- Learn header -->
+  <rect x="482" y="32" width="318" height="40" fill="#2d2d2d"/>
+  <text x="498" y="56" style="font-family:Segoe UI,sans-serif;font-size:14px;fill:#d4d4d4;font-weight:bold">IVector&lt;T&gt; Interface</text>
+  <!-- Learn content -->
+  <text x="498" y="92" style="font-family:Segoe UI,sans-serif;font-size:11px;fill:#808080">Windows.Foundation.Collections</text>
+  <text x="498" y="116" style="font-family:Segoe UI,sans-serif;font-size:12px;fill:#d4d4d4">Represents a random-access</text>
+  <text x="498" y="132" style="font-family:Segoe UI,sans-serif;font-size:12px;fill:#d4d4d4">collection of elements.</text>
+  <rect x="498" y="144" width="280" height="1" fill="#454545"/>
+  <text x="498" y="168" style="font-family:Segoe UI,sans-serif;font-size:12px;fill:#d4d4d4;font-weight:bold">Methods</text>
+  <text x="510" y="188" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#DCDCAA">GetAt</text>
+  <text x="554" y="188" style="font-family:Segoe UI,sans-serif;font-size:11px;fill:#808080"> — Returns the item at index</text>
+  <text x="510" y="206" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#DCDCAA">Append</text>
+  <text x="562" y="206" style="font-family:Segoe UI,sans-serif;font-size:11px;fill:#808080"> — Appends an item</text>
+  <text x="510" y="224" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#DCDCAA">InsertAt</text>
+  <text x="578" y="224" style="font-family:Segoe UI,sans-serif;font-size:11px;fill:#808080"> — Inserts an item</text>
+  <text x="510" y="242" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#DCDCAA">RemoveAt</text>
+  <text x="578" y="242" style="font-family:Segoe UI,sans-serif;font-size:11px;fill:#808080"> — Removes item at index</text>
+  <text x="510" y="260" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#DCDCAA">Clear</text>
+  <text x="550" y="260" style="font-family:Segoe UI,sans-serif;font-size:11px;fill:#808080"> — Removes all items</text>
+  <rect x="498" y="272" width="280" height="1" fill="#454545"/>
+  <text x="498" y="292" style="font-family:Segoe UI,sans-serif;font-size:12px;fill:#d4d4d4;font-weight:bold">Properties</text>
+  <text x="510" y="310" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#DCDCAA">Size</text>
+  <text x="542" y="310" style="font-family:Segoe UI,sans-serif;font-size:11px;fill:#808080"> — Gets the number of items</text>
+</svg>

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a0533"/>
+      <stop offset="100%" stop-color="#0d1b3e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" fill="url(#bg)"/>
+  <text x="2" y="100" font-family="Consolas, monospace" font-size="96" font-weight="200" fill="#7C3AED" opacity="0.06">{</text>
+  <text x="72" y="100" font-family="Consolas, monospace" font-size="96" font-weight="200" fill="#2563EB" opacity="0.06">}</text>
+  <text x="8" y="78" font-family="Arial, sans-serif" font-size="40" font-weight="900" fill="#ffffff">M</text>
+  <circle cx="54" cy="48" r="6" fill="none" stroke="#9D5CFF" stroke-width="3"/>
+  <line x1="54" y1="54" x2="54" y2="78" stroke="#9D5CFF" stroke-width="3" stroke-linecap="round"/>
+  <text x="64" y="78" font-family="Arial, sans-serif" font-size="40" font-weight="900" fill="#ffffff">DL</text>
+  <rect x="12" y="88" width="104" height="3" rx="1.5" fill="url(#accent)"/>
+</svg>

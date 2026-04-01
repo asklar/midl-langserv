@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="140" viewBox="0 0 600 140">
+  <rect width="600" height="140" rx="8" fill="#1e1e1e"/>
+
+  <!-- Line numbers gutter -->
+  <rect x="0" y="0" width="44" height="200" fill="#1e1e1e"/>
+
+  <!-- Line 7: Widget(); -->
+  <text x="20" y="30" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080;text-anchor:end"> 7</text>
+  <text x="114" y="30" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#DCDCAA">Widget</text>
+  <text x="161" y="30" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">();</text>
+
+  <!-- Line 8: Strng Name; (with lightbulb) -->
+  <rect x="44" y="37" width="556" height="20" fill="#2a2d2e"/>
+  <text x="20" y="52" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080;text-anchor:end"> 8</text>
+  <text x="52" y="52" style="font-size:14px;fill:#CCA700">💡</text>
+  <text x="114" y="52" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#F44747">Strng</text>
+  <text x="161" y="52" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">Name;</text>
+  <!-- Error squiggly under Strng -->
+  <path d="M114,56 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2 l2,-2 l2,2" style="fill:none;stroke:#F44747;stroke-width:2"/>
+
+  <!-- Line 9: String Name { get; set; }; -->
+  <text x="20" y="72" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080;text-anchor:end"> 9</text>
+  <text x="114" y="72" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">String</text>
+  <text x="169" y="72" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">Name { </text>
+  <text x="224" y="72" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">get</text>
+  <text x="247" y="72" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">; </text>
+  <text x="263" y="72" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">set</text>
+  <text x="286" y="72" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">; };</text>
+
+  <!-- Line 10 -->
+  <text x="20" y="92" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#808080;text-anchor:end">10</text>
+  <text x="114" y="92" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#C586C0">event</text>
+  <text x="161" y="92" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">EventHandler</text>
+  <text x="255" y="92" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">&lt;</text>
+  <text x="263" y="92" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#4EC9B0">String</text>
+  <text x="310" y="92" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">&gt;</text>
+  <text x="326" y="92" style="font-family:Consolas,'Cascadia Code',monospace;font-size:13px;fill:#d4d4d4">NameChanged;</text>
+
+  <!-- Quick Fix dropdown (rendered last for opacity) -->
+  <rect x="68" y="60" width="300" height="56" rx="4" fill="#252526" style="stroke:#454545;stroke-width:1"/>
+  <!-- Header -->
+  <text x="80" y="78" style="font-family:Consolas,'Cascadia Code',monospace;font-size:11px;fill:#808080">Quick Fix...</text>
+  <rect x="72" y="84" width="292" height="1" fill="#454545"/>
+  <!-- Fix option (highlighted) -->
+  <rect x="72" y="87" width="292" height="24" fill="#094771"/>
+  <text x="80" y="104" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#d4d4d4">Replace 'Strng' with 'String'</text>
+
+  <!-- Caption -->
+  <text x="300" y="132" style="font-family:Consolas,'Cascadia Code',monospace;font-size:12px;fill:#808080;text-anchor:middle">One-click quick fix for typo correction</text>
+</svg>
